@@ -56,9 +56,10 @@
                                     </td>
                                     <td class="px-6 py-4">
                                         @if($order->bukti_transfer)
-                                            <span class="inline-flex items-center text-xs font-bold text-indigo-600 dark:text-indigo-400 gap-1">
-                                                Ada Bukti
-                                            </span>
+                                            <a href="{{ asset('storage/bukti_transfer/' . $order->bukti_transfer) }}" target="_blank" class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-slate-900/10 text-indigo-600 hover:text-indigo-800 dark:text-indigo-400 dark:hover:text-indigo-200 gap-1.5 transition">
+                                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                                                Lihat Bukti
+                                            </a>
                                         @else
                                             <span class="text-rose-500 text-xs italic">Belum Upload</span>
                                         @endif
@@ -72,6 +73,10 @@
                                         @elseif($order->status === 'lunas')
                                             <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-350">
                                                 Lunas
+                                            </span>
+                                        @elseif($order->status === 'selesai')
+                                            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-teal-50 dark:bg-teal-900/30 text-teal-700 dark:text-teal-300">
+                                                Diterima (Buyer)
                                             </span>
                                         @elseif($order->status === 'dibatalkan')
                                             <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-rose-50 dark:bg-rose-900/30 text-rose-700 dark:text-rose-400">

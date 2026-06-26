@@ -85,24 +85,9 @@
                                     </td>
                                     <td class="px-6 py-4 text-center">
                                         @if($order->status === 'menunggu_verifikasi')
-                                            <div class="flex items-center justify-center gap-2">
-                                                <!-- Form Approve -->
-                                                <form action="{{ route('seller.orders.verify', $order->id) }}" method="POST" class="inline">
-                                                    @csrf
-                                                    <input type="hidden" name="action" value="approve">
-                                                    <button type="submit" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold transition duration-150 shadow-sm shadow-emerald-600/10">
-                                                        Setujui
-                                                    </button>
-                                                </form>
-                                                <!-- Form Reject -->
-                                                <form action="{{ route('seller.orders.verify', $order->id) }}" method="POST" class="inline" onsubmit="return confirm('Apakah Anda yakin ingin membatalkan pesanan ini?')">
-                                                    @csrf
-                                                    <input type="hidden" name="action" value="reject">
-                                                    <button type="submit" class="px-3 py-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-xs font-bold transition duration-150 shadow-sm shadow-rose-600/10">
-                                                        Tolak
-                                                    </button>
-                                                </form>
-                                            </div>
+                                            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400">
+                                                Menunggu Verifikasi Admin
+                                            </span>
                                         @elseif($order->status === 'lunas')
                                             <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-300">
                                                 Lunas

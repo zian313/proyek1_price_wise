@@ -66,6 +66,10 @@
                                             <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-300">
                                                 Lunas / Selesai
                                             </span>
+                                        @elseif($order->status === 'selesai')
+                                            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-teal-50 dark:bg-teal-900/30 text-teal-700 dark:text-teal-300">
+                                                Diterima oleh Buyer
+                                            </span>
                                         @elseif($order->status === 'dibatalkan')
                                             <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-rose-50 dark:bg-rose-900/30 text-rose-700 dark:text-rose-400">
                                                 Dibatalkan

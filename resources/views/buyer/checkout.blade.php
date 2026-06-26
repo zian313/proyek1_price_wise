@@ -17,8 +17,12 @@
                     <div class="bg-[#1C2541]/50 border border-gray-800 rounded-2xl overflow-hidden p-6 shadow-xl backdrop-blur-md">
                         <h3 class="text-sm font-bold text-[#00B4D8] tracking-widest uppercase mb-4">Informasi Produk</h3>
                         <div class="flex flex-col sm:flex-row gap-6">
-                            <div class="w-full sm:w-44 h-44 bg-gray-900 rounded-xl flex items-center justify-center border border-gray-800">
-                                <span class="text-5xl">📦</span>
+                            <div class="w-full sm:w-44 h-44 bg-gray-900 rounded-xl overflow-hidden border border-gray-800">
+                                @if($product->foto)
+                                    <img src="{{ asset('storage/products/' . $product->foto) }}" alt="{{ $product->nama_produk }}" class="w-full h-full object-cover">
+                                @else
+                                    <div class="w-full h-full flex items-center justify-center text-5xl">📦</div>
+                                @endif
                             </div>
 
                             <div class="flex-1 space-y-2">

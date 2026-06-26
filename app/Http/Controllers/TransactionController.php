@@ -8,6 +8,7 @@ use App\Models\OrderDetail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class TransactionController extends Controller
 {
@@ -77,48 +78,34 @@ class TransactionController extends Controller
         return view('seller.orders.index', compact('orderDetails'));
     }
 
-    // 5. Verifikasi pesanan (Approve / Reject) dari sisi Seller
-    public function verifyOrder(Request $request, $order_id)
+    // 5. Buyer konfirmasi bahwa barang telah diterima (hanya jika status sudah 'lunas')
+    public function confirmReceipt(Request $request, $order_id)
     {
-        $order = Order::findOrFail($order_id);
+        $order = Order::with('orderDetails')->findOrFail($order_id);
 
-        // Pastikan order ini berisi produk milik seller yang sedang login
-        $hasAccess = OrderDetail::where('order_id', $order->id)
-            ->whereHas('product', function ($query) {
-                $query->where('user_id', Auth::id());
-            })->exists();
-
-        if (!$hasAccess) {
+        // Pastikan order milik buyer yang sedang login
+        if ($order->user_id !== Auth::id()) {
             abort(403, 'Aksi tidak sah.');
         }
 
-        $request->validate([
-            'action' => 'required|in:approve,reject',
-        ]);
+        // Hanya boleh konfirmasi jika status sudah 'lunas'
+        if ($order->status !== 'lunas') {
+            return redirect()->route('orders.history')->with('error', 'Order belum bisa dikonfirmasi. Status belum lunas.');
+        }
 
         try {
-            DB::transaction(function () use ($order, $request) {
-                if ($request->action === 'approve') {
-                    $order->update(['status' => 'lunas']);
+            Log::info('confirmReceipt called', ['order_id' => $order->id, 'user_id' => Auth::id(), 'status_before' => $order->status]);
 
-                    // Kurangi stok produk yang dibeli
-                    foreach ($order->orderDetails as $detail) {
-                        $product = $detail->product;
-                        if ($product->stok >= $detail->jumlah) {
-                            $product->decrement('stok', $detail->jumlah);
-                        } else {
-                            throw new \Exception("Stok untuk produk '{$product->nama_produk}' tidak mencukupi.");
-                        }
-                    }
-                } else {
-                    $order->update(['status' => 'dibatalkan']);
-                }
+            DB::transaction(function () use ($order) {
+                $order->update(['status' => 'selesai']);
             });
 
-            $statusMessage = $request->action === 'approve' ? 'Pesanan berhasil disetujui (Lunas)!' : 'Pesanan berhasil dibatalkan.';
-            return redirect()->route('seller.orders')->with('success', $statusMessage);
+            Log::info('confirmReceipt success', ['order_id' => $order->id, 'user_id' => Auth::id()]);
+
+            return redirect()->route('orders.history')->with('success', 'Terima kasih! Konfirmasi penerimaan berhasil.');
         } catch (\Exception $e) {
-            return redirect()->route('seller.orders')->with('error', $e->getMessage());
+            Log::error('confirmReceipt error', ['order_id' => $order->id, 'error' => $e->getMessage()]);
+            return redirect()->route('orders.history')->with('error', $e->getMessage());
         }
     }
 }

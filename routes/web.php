@@ -23,6 +23,10 @@ Route::get('/', function () {
 Route::get('/dashboard', function () {
     $products = Product::where('stok', '>', 0)->with(['category', 'user'])->latest()->get();
     
+    if (Auth::user()->role === 'admin') {
+        return redirect()->route('admin.dashboard');
+    }
+
     if (Auth::user()->role === 'seller') {
         $totalProducts = \App\Models\Product::where('user_id', Auth::id())->count();
         $totalEarnings = \App\Models\OrderDetail::whereHas('product', function ($q) {
@@ -57,7 +61,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/checkout/store/{product_id}', [TransactionController::class, 'storeTransaction'])->name('checkout.store');
     Route::get('/orders/history', [TransactionController::class, 'history'])->name('orders.history');
     Route::get('/seller/orders', [TransactionController::class, 'sellerOrders'])->name('seller.orders');
-    Route::post('/seller/orders/{order_id}/verify', [TransactionController::class, 'verifyOrder'])->name('seller.orders.verify');
+    // Buyer: konfirmasi bahwa barang telah diterima setelah status 'lunas'
+    Route::post('/orders/{order_id}/confirm-receipt', [TransactionController::class, 'confirmReceipt'])->name('orders.confirmReceipt');
 });
 
 // ADMIN ROUTES
