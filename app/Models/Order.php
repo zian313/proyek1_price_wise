@@ -10,7 +10,12 @@ class Order extends Model
         'user_id', 
         'total_harga', 
         'status', 
-        'bukti_transfer'
+        'bukti_transfer',
+        'nama',
+        'email',
+        'alamat',
+        'ekspedisi',
+        'metode_pembayaran'
     ];
 
     // Relasi ke User (Buyer)

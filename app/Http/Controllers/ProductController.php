@@ -34,6 +34,9 @@ class ProductController extends Controller
             'harga' => 'required|numeric|min:0',
             'stok' => 'required|numeric|min:0',
             'foto' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048', // Maksimal 2MB
+            'bank_name' => 'nullable|string|max:255',
+            'no_rekening' => 'nullable|string|max:255',
+            'atas_nama' => 'nullable|string|max:255',
         ]);
 
         $nama_file_foto = null;
@@ -55,6 +58,9 @@ class ProductController extends Controller
             'harga' => $request->harga,
             'stok' => $request->stok,
             'foto' => $nama_file_foto,
+            'bank_name' => $request->bank_name,
+            'no_rekening' => $request->no_rekening,
+            'atas_nama' => $request->atas_nama,
         ]);
 
         // Kembalikan ke halaman daftar produk dengan pesan sukses
@@ -82,6 +88,9 @@ class ProductController extends Controller
             'harga' => 'required|numeric|min:0',
             'stok' => 'required|numeric|min:0',
             'foto' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'bank_name' => 'nullable|string|max:255',
+            'no_rekening' => 'nullable|string|max:255',
+            'atas_nama' => 'nullable|string|max:255',
         ]);
 
         $nama_file_foto = $product->foto; 
@@ -103,6 +112,9 @@ class ProductController extends Controller
             'harga' => $request->harga,
             'stok' => $request->stok,
             'foto' => $nama_file_foto,
+            'bank_name' => $request->bank_name,
+            'no_rekening' => $request->no_rekening,
+            'atas_nama' => $request->atas_nama,
         ]);
 
         return redirect()->route('products.index')->with('success', 'Produk berhasil diperbarui!');

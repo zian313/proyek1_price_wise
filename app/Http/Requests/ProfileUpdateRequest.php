@@ -16,7 +16,7 @@ class ProfileUpdateRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
+        $rules = [
             'name' => ['required', 'string', 'max:255'],
             'email' => [
                 'required',
@@ -27,5 +27,13 @@ class ProfileUpdateRequest extends FormRequest
                 Rule::unique(User::class)->ignore($this->user()->id),
             ],
         ];
+
+        if ($this->user()->role === 'seller') {
+            $rules['bank_name'] = ['nullable', 'string', 'max:255'];
+            $rules['no_rekening'] = ['nullable', 'string', 'max:255'];
+            $rules['atas_nama'] = ['nullable', 'string', 'max:255'];
+        }
+
+        return $rules;
     }
 }

@@ -59,6 +59,8 @@ Route::middleware('auth')->group(function () {
     
     Route::get('/checkout/{product_id}', [TransactionController::class, 'checkout'])->name('checkout');
     Route::post('/checkout/store/{product_id}', [TransactionController::class, 'storeTransaction'])->name('checkout.store');
+    Route::get('/orders/{order_id}/payment', [TransactionController::class, 'payment'])->name('orders.payment');
+    Route::post('/orders/{order_id}/pay', [TransactionController::class, 'pay'])->name('orders.pay');
     Route::get('/orders/history', [TransactionController::class, 'history'])->name('orders.history');
     Route::get('/seller/orders', [TransactionController::class, 'sellerOrders'])->name('seller.orders');
     // Buyer: konfirmasi bahwa barang telah diterima setelah status 'lunas'

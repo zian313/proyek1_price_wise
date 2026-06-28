@@ -89,6 +89,44 @@
                             @enderror
                         </div>
 
+                        <!-- Bank Details -->
+                        <div class="md:col-span-2 border-t border-gray-100 dark:border-gray-700 pt-6">
+                            <h4 class="text-sm font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider mb-2">Rekening Pembayaran M-Banking</h4>
+                            <p class="text-xs text-gray-400 mb-4">Ubah rekening M-Banking Anda agar pembeli dapat mentransfer langsung ke rekening ini saat memesan produk ini.</p>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                <div>
+                                    <label for="bank_name" class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Nama Bank</label>
+                                    <select name="bank_name" id="bank_name" class="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 dark:bg-gray-900 dark:border-gray-700 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition text-gray-800 dark:text-gray-200 cursor-pointer">
+                                        <option value="" {{ old('bank_name', $product->bank_name) === '' ? 'selected' : '' }}>-- Pilih Bank --</option>
+                                        <option value="M-Banking BCA" {{ old('bank_name', $product->bank_name) === 'M-Banking BCA' ? 'selected' : '' }}>M-Banking BCA</option>
+                                        <option value="M-Banking Mandiri" {{ old('bank_name', $product->bank_name) === 'M-Banking Mandiri' ? 'selected' : '' }}>M-Banking Mandiri</option>
+                                        <option value="M-Banking BNI" {{ old('bank_name', $product->bank_name) === 'M-Banking BNI' ? 'selected' : '' }}>M-Banking BNI</option>
+                                        <option value="M-Banking BRI" {{ old('bank_name', $product->bank_name) === 'M-Banking BRI' ? 'selected' : '' }}>M-Banking BRI</option>
+                                    </select>
+                                    @error('bank_name')
+                                        <p class="text-sm text-rose-500 mt-2">{{ $message }}</p>
+                                    @enderror
+                                </div>
+                                
+                                <div>
+                                    <label for="no_rekening" class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Nomor Rekening</label>
+                                    <input type="text" name="no_rekening" id="no_rekening" value="{{ old('no_rekening', $product->no_rekening) }}" placeholder="Contoh: 7140928122" class="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 dark:bg-gray-900 dark:border-gray-700 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition text-gray-800 dark:text-gray-200">
+                                    @error('no_rekening')
+                                        <p class="text-sm text-rose-500 mt-2">{{ $message }}</p>
+                                    @enderror
+                                </div>
+
+                                <div>
+                                    <label for="atas_nama" class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Atas Nama Rekening</label>
+                                    <input type="text" name="atas_nama" id="atas_nama" value="{{ old('atas_nama', $product->atas_nama) }}" placeholder="Contoh: Budi Santoso" class="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 dark:bg-gray-900 dark:border-gray-700 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition text-gray-800 dark:text-gray-200">
+                                    @error('atas_nama')
+                                        <p class="text-sm text-rose-500 mt-2">{{ $message }}</p>
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
+
                         <!-- Description -->
                         <div class="md:col-span-2">
                             <label for="deskripsi" class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Deskripsi Produk</label>

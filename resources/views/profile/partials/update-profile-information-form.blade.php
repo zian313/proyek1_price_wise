@@ -47,6 +47,37 @@
             @endif
         </div>
 
+        @if ($user->role === 'seller')
+            <div class="border-t border-slate-800 pt-6 space-y-6">
+                <h3 class="text-sm font-bold text-teal-400 uppercase tracking-wider">Informasi Rekening M-Banking (Penjual)</h3>
+                <p class="text-xs text-slate-400">Informasi ini akan ditampilkan kepada pembeli untuk melakukan transfer pembayaran atas produk Anda.</p>
+
+                <div>
+                    <x-input-label for="bank_name" :value="__('Nama Bank')" class="text-slate-100" />
+                    <select id="bank_name" name="bank_name" class="mt-1 block w-full bg-slate-950 text-white border-slate-700 focus:border-teal-500 focus:ring-teal-500 rounded-md shadow-sm border px-3 py-2">
+                        <option value="" {{ old('bank_name', $user->bank_name) === '' ? 'selected' : '' }}>-- Pilih Bank --</option>
+                        <option value="M-Banking BCA" {{ old('bank_name', $user->bank_name) === 'M-Banking BCA' ? 'selected' : '' }}>M-Banking BCA</option>
+                        <option value="M-Banking Mandiri" {{ old('bank_name', $user->bank_name) === 'M-Banking Mandiri' ? 'selected' : '' }}>M-Banking Mandiri</option>
+                        <option value="M-Banking BNI" {{ old('bank_name', $user->bank_name) === 'M-Banking BNI' ? 'selected' : '' }}>M-Banking BNI</option>
+                        <option value="M-Banking BRI" {{ old('bank_name', $user->bank_name) === 'M-Banking BRI' ? 'selected' : '' }}>M-Banking BRI</option>
+                    </select>
+                    <x-input-error class="mt-2 text-sm text-rose-300" :messages="$errors->get('bank_name')" />
+                </div>
+
+                <div>
+                    <x-input-label for="no_rekening" :value="__('Nomor Rekening')" class="text-slate-100" />
+                    <x-text-input id="no_rekening" name="no_rekening" type="text" class="mt-1 block w-full bg-slate-950 text-white border-slate-700 focus:border-teal-500 focus:ring-teal-500" :value="old('no_rekening', $user->no_rekening)" placeholder="Contoh: 7140928122" />
+                    <x-input-error class="mt-2 text-sm text-rose-300" :messages="$errors->get('no_rekening')" />
+                </div>
+
+                <div>
+                    <x-input-label for="atas_nama" :value="__('Atas Nama Pemilik Rekening')" class="text-slate-100" />
+                    <x-text-input id="atas_nama" name="atas_nama" type="text" class="mt-1 block w-full bg-slate-950 text-white border-slate-700 focus:border-teal-500 focus:ring-teal-500" :value="old('atas_nama', $user->atas_nama)" placeholder="Contoh: Budi Santoso" />
+                    <x-input-error class="mt-2 text-sm text-rose-300" :messages="$errors->get('atas_nama')" />
+                </div>
+            </div>
+        @endif
+
         <div class="flex items-center gap-4">
             <x-primary-button class="bg-teal-600 hover:bg-teal-500">{{ __('Save') }}</x-primary-button>
 

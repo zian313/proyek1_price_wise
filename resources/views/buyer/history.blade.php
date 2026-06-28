@@ -79,7 +79,15 @@
                                         @endif
                                     </td>
                                     <td class="px-6 py-4">
-                                        @if($order->status === 'menunggu_verifikasi')
+                                        @if($order->status === 'menunggu_pembayaran')
+                                            <div class="flex items-center gap-3">
+                                                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-400 gap-1.5">
+                                                    <span class="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-pulse"></span>
+                                                    Menunggu Pembayaran
+                                                </span>
+                                                <a href="{{ route('orders.payment', $order->id) }}" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-bold transition">Bayar Sekarang</a>
+                                            </div>
+                                        @elseif($order->status === 'menunggu_verifikasi')
                                             <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 gap-1.5">
                                                 <span class="w-1.5 h-1.5 bg-amber-500 rounded-full animate-pulse"></span>
                                                 Menunggu Verifikasi

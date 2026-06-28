@@ -34,15 +34,23 @@
                     <!-- Grid Info Pesanan & Pembeli -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div class="space-y-4">
-                            <h4 class="text-sm font-bold text-gray-400 uppercase tracking-wider">Informasi Pembeli</h4>
+                            <h4 class="text-sm font-bold text-gray-400 uppercase tracking-wider">Informasi Penerima & Pengiriman</h4>
                             <div class="bg-gray-50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-800 rounded-xl p-4 space-y-3">
                                 <div>
-                                    <span class="text-xs text-gray-400 block">Nama Lengkap</span>
-                                    <span class="font-bold text-gray-800 dark:text-white">{{ $order->user->name }}</span>
+                                    <span class="text-xs text-gray-400 block">Nama Penerima</span>
+                                    <span class="font-bold text-gray-800 dark:text-white">{{ $order->nama ?? $order->user->name }}</span>
                                 </div>
                                 <div>
                                     <span class="text-xs text-gray-400 block">Alamat Email</span>
-                                    <span class="text-sm text-gray-600 dark:text-gray-300">{{ $order->user->email }}</span>
+                                    <span class="text-sm text-gray-600 dark:text-gray-300">{{ $order->email ?? $order->user->email }}</span>
+                                </div>
+                                <div>
+                                    <span class="text-xs text-gray-400 block">Ekspedisi</span>
+                                    <span class="inline-flex items-center px-2 py-0.5 bg-indigo-500/10 text-indigo-400 text-xs font-bold rounded border border-indigo-500/20 mt-0.5">{{ $order->ekspedisi ?? '-' }}</span>
+                                </div>
+                                <div>
+                                    <span class="text-xs text-gray-400 block">Alamat Lengkap</span>
+                                    <span class="text-sm text-gray-600 dark:text-gray-300 leading-relaxed">{{ $order->alamat ?? '-' }}</span>
                                 </div>
                             </div>
                         </div>
@@ -55,9 +63,18 @@
                                     <span class="text-sm text-gray-800 dark:text-white font-medium">{{ $order->created_at->format('d M Y, H:i') }} WIB</span>
                                 </div>
                                 <div>
+                                    <span class="text-xs text-gray-400 block">Metode Pembayaran</span>
+                                    <span class="text-sm text-gray-800 dark:text-white font-semibold">{{ $order->metode_pembayaran ?? '-' }}</span>
+                                </div>
+                                <div>
                                     <span class="text-xs text-gray-400 block">Status Saat Ini</span>
                                     <div class="mt-1">
-                                        @if($order->status === 'menunggu_verifikasi')
+                                        @if($order->status === 'menunggu_pembayaran')
+                                            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-400 gap-1.5">
+                                                <span class="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-pulse"></span>
+                                                Menunggu Pembayaran
+                                            </span>
+                                        @elseif($order->status === 'menunggu_verifikasi')
                                             <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 gap-1.5">
                                                 <span class="w-1.5 h-1.5 bg-amber-500 rounded-full animate-pulse"></span>
                                                 Menunggu Verifikasi

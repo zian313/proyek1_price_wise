@@ -54,7 +54,12 @@
                                 @endphp
                                 <tr class="hover:bg-gray-50/50 dark:hover:bg-gray-900/20 text-sm text-gray-700 dark:text-gray-300 transition duration-150">
                                     <td class="px-6 py-4 font-mono font-bold text-gray-400">#PW-{{ str_pad($order->id, 5, '0', STR_PAD_LEFT) }}</td>
-                                    <td class="px-6 py-4 font-semibold text-gray-800 dark:text-white">{{ $order->user->name }}</td>
+                                    <td class="px-6 py-4">
+                                        <div class="font-bold text-gray-800 dark:text-white">{{ $order->nama ?? $order->user->name }}</div>
+                                        <div class="text-xs text-gray-400 mt-0.5">{{ $order->email ?? $order->user->email }}</div>
+                                        <div class="text-xs text-indigo-600 dark:text-indigo-400 font-bold mt-1">Kurir: {{ $order->ekspedisi ?? '-' }}</div>
+                                        <div class="text-xs text-gray-500 mt-1 max-w-xs break-all" title="{{ $order->alamat }}">Alamat: {{ $order->alamat ?? '-' }}</div>
+                                    </td>
                                     <td class="px-6 py-4">
                                         <div class="flex items-center gap-3">
                                             <div class="w-10 h-10 bg-gray-100 dark:bg-gray-950 border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden flex items-center justify-center shrink-0">

@@ -17,7 +17,10 @@ use HasFactory;
         'deskripsi', 
         'harga', 
         'stok', 
-        'foto'
+        'foto',
+        'bank_name',
+        'no_rekening',
+        'atas_nama',
     ];
 
     // Relasi ke Kategori
