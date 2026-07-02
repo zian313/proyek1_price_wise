@@ -91,8 +91,8 @@
 
                         <!-- Bank Details -->
                         <div class="md:col-span-2 border-t border-gray-100 dark:border-gray-700 pt-6">
-                            <h4 class="text-sm font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider mb-2">Rekening Pembayaran M-Banking</h4>
-                            <p class="text-xs text-gray-400 mb-4">Ubah rekening M-Banking Anda agar pembeli dapat mentransfer langsung ke rekening ini saat memesan produk ini.</p>
+                            <h4 class="text-sm font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider mb-2">Rekening Penerimaan Dana Penjualan</h4>
+                            <p class="text-xs text-gray-400 mb-4">Ubah rekening M-Banking Anda agar Admin dapat mencairkan/mentransfer dana hasil penjualan kepada Anda setelah pembeli mengonfirmasi penerimaan barang.</p>
                             
                             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                                 <div>

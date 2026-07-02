@@ -66,10 +66,10 @@ class TransactionTest extends TestCase
         // Verify redirect to payment page
         $response->assertRedirect(route('orders.payment', $order->id));
 
-        // Get payment page and assert it shows seller's bank details
+        // Get payment page and assert it shows admin's Rekber details (chosen Mandiri bank)
         $paymentPageResponse = $this->actingAs($buyer)->get(route('orders.payment', $order->id));
-        $paymentPageResponse->assertSee('9876543210');
-        $paymentPageResponse->assertSee('John Seller Account');
+        $paymentPageResponse->assertSee('1320098234231');
+        $paymentPageResponse->assertSee('Price Wise Rekber');
         $paymentPageResponse->assertSee('M-Banking Mandiri');
 
         // 4. STEP 2: Submit payment proof

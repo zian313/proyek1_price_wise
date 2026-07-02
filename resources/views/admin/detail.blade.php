@@ -144,6 +144,41 @@
                         </div>
                     </div>
 
+                    <!-- Informasi Rekening Seller (Untuk Transfer Dana) -->
+                    <div class="space-y-4 pt-6 border-t border-gray-100 dark:border-gray-800">
+                        <h4 class="text-sm font-bold text-gray-400 uppercase tracking-wider">Informasi Rekening Penjual (Seller)</h4>
+                        <div class="bg-gray-50 dark:bg-gray-900/50 border border-gray-100 dark:border-gray-800 rounded-xl p-4">
+                            <p class="text-xs text-gray-400 mb-3 leading-relaxed">
+                                Setelah status pesanan <strong>SELESAI</strong> (pembeli telah menerima barang), gunakan rekening di bawah ini untuk meneruskan dana ke Penjual.
+                            </p>
+                            @foreach($order->orderDetails as $detail)
+                                @php 
+                                    $product = $detail->product;
+                                    $seller = $product ? $product->user : null;
+                                    // Ambil detail bank dari produk, jika kosong ambil dari profile user/seller
+                                    $bank_name = ($product && $product->bank_name) ? $product->bank_name : ($seller ? $seller->bank_name : null);
+                                    $no_rekening = ($product && $product->no_rekening) ? $product->no_rekening : ($seller ? $seller->no_rekening : null);
+                                    $atas_nama = ($product && $product->atas_nama) ? $product->atas_nama : ($seller ? $seller->atas_nama : ($seller ? $seller->name : null));
+                                @endphp
+                                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 py-2 border-b border-gray-100 dark:border-gray-800 last:border-0">
+                                    <div>
+                                        <p class="text-sm font-bold text-gray-800 dark:text-white">{{ $product ? $product->nama_produk : 'Produk Dihapus' }}</p>
+                                        <p class="text-xs text-gray-400">Penjual: {{ $seller ? $seller->name : '-' }} ({{ $seller ? $seller->email : '-' }})</p>
+                                    </div>
+                                    <div class="text-right">
+                                        @if($bank_name && $no_rekening)
+                                            <p class="text-sm font-bold text-indigo-600 dark:text-indigo-400">{{ $bank_name }}</p>
+                                            <p class="text-base font-bold font-mono text-gray-800 dark:text-white">{{ $no_rekening }}</p>
+                                            <p class="text-xs text-gray-400">a.n. {{ $atas_nama }}</p>
+                                        @else
+                                            <p class="text-xs text-rose-500 italic font-bold">Penjual belum melengkapi data rekening bank.</p>
+                                        @endif
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+
                     <!-- Bukti Transfer & Aksi Verifikasi -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-6 border-t border-gray-100 dark:border-gray-800">
                         <!-- Bukti Transfer Gambar -->

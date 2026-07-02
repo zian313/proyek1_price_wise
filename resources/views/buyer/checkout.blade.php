@@ -81,15 +81,11 @@
                                  <div class="space-y-1.5">
                                     <label class="text-xs font-bold text-gray-400 uppercase tracking-wider block">Metode Pembayaran</label>
                                     <select name="metode_pembayaran" required class="w-full text-sm text-gray-300 bg-gray-900 border border-gray-800 rounded-xl px-4 py-3 focus:outline-none focus:border-[#00B4D8] transition cursor-pointer">
-                                        @if($product->bank_name && $product->no_rekening)
-                                            <option value="{{ $product->bank_name }}" selected>{{ $product->bank_name }} (Direct Seller)</option>
-                                        @else
-                                            <option value="" disabled selected>-- Pilih Bank (Rekber) --</option>
-                                            <option value="M-Banking BCA">M-Banking BCA</option>
-                                            <option value="M-Banking Mandiri">M-Banking Mandiri</option>
-                                            <option value="M-Banking BNI">M-Banking BNI</option>
-                                            <option value="M-Banking BRI">M-Banking BRI</option>
-                                        @endif
+                                        <option value="" disabled selected>-- Pilih Bank (Rekber) --</option>
+                                        <option value="M-Banking BCA">M-Banking BCA</option>
+                                        <option value="M-Banking Mandiri">M-Banking Mandiri</option>
+                                        <option value="M-Banking BNI">M-Banking BNI</option>
+                                        <option value="M-Banking BRI">M-Banking BRI</option>
                                     </select>
                                 </div>
                             </div>

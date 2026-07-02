@@ -50,7 +50,7 @@
         @if ($user->role === 'seller')
             <div class="border-t border-slate-800 pt-6 space-y-6">
                 <h3 class="text-sm font-bold text-teal-400 uppercase tracking-wider">Informasi Rekening M-Banking (Penjual)</h3>
-                <p class="text-xs text-slate-400">Informasi ini akan ditampilkan kepada pembeli untuk melakukan transfer pembayaran atas produk Anda.</p>
+                <p class="text-xs text-slate-400">Informasi ini akan digunakan oleh Admin untuk mengirimkan dana hasil penjualan kepada Anda setelah pembeli mengonfirmasi penerimaan barang.</p>
 
                 <div>
                     <x-input-label for="bank_name" :value="__('Nama Bank')" class="text-slate-100" />

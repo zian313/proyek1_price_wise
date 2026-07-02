@@ -59,11 +59,7 @@
                                 <div>
                                     <p class="text-xs text-white/60 font-medium uppercase tracking-widest">Metode Pembayaran</p>
                                     <p class="text-lg font-black text-white mt-0.5">
-                                        @if($product && $product->bank_name && $product->no_rekening)
-                                            {{ $product->bank_name }}
-                                        @else
-                                            {{ $order->metode_pembayaran }}
-                                        @endif
+                                        {{ $order->metode_pembayaran }}
                                     </p>
                                 </div>
                                 <span class="text-2xl">🏦</span>
@@ -71,26 +67,18 @@
 
                             <div class="space-y-1">
                                 <p class="text-[10px] text-white/50 uppercase tracking-wider font-semibold">
-                                    @if($product && $product->bank_name && $product->no_rekening)
-                                        Nomor Rekening Penjual
-                                    @else
-                                        Nomor Rekening Rekber
-                                    @endif
+                                    Nomor Rekening Rekber
                                 </p>
                                 <div class="flex items-center gap-3">
                                     <span id="rekening-num" class="text-xl font-bold font-mono tracking-wider text-white">
-                                        @if($product && $product->bank_name && $product->no_rekening)
-                                            {{ $product->no_rekening }}
+                                        @if(str_contains(strtolower($order->metode_pembayaran), 'bca'))
+                                            7140928122
+                                        @elseif(str_contains(strtolower($order->metode_pembayaran), 'mandiri'))
+                                            1320098234231
+                                        @elseif(str_contains(strtolower($order->metode_pembayaran), 'bni'))
+                                            0983248324
                                         @else
-                                            @if(str_contains(strtolower($order->metode_pembayaran), 'bca'))
-                                                7140928122
-                                            @elseif(str_contains(strtolower($order->metode_pembayaran), 'mandiri'))
-                                                1320098234231
-                                            @elseif(str_contains(strtolower($order->metode_pembayaran), 'bni'))
-                                                0983248324
-                                            @else
-                                                002301009823301
-                                            @endif
+                                            002301009823301
                                         @endif
                                     </span>
                                     <button type="button" id="rekening-num-btn" onclick="copyText('rekening-num')" class="text-xs bg-white/10 hover:bg-white/20 border border-white/10 rounded-lg px-2 py-1 transition flex items-center gap-1 font-sans font-bold">
@@ -103,11 +91,7 @@
                                 <div>
                                     <p class="text-[10px] text-white/50 uppercase tracking-wider font-semibold">Atas Nama Rekening</p>
                                     <p class="text-sm font-bold text-white uppercase">
-                                        @if($product && $product->bank_name && $product->no_rekening)
-                                            {{ $product->atas_nama ?? ($product->user->name ?? 'Penjual') }}
-                                        @else
-                                            Price Wise Rekber
-                                        @endif
+                                        Price Wise Rekber
                                     </p>
                                 </div>
                                 <div class="text-right">
