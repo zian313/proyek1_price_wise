@@ -104,6 +104,24 @@
                                                     <button type="submit" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold transition">Konfirmasi Terima</button>
                                                 </form>
                                             </div>
+                                            @elseif($order->status === 'selesai')
+
+                                            <div class="flex items-center gap-3">
+
+                                                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-400 gap-1.5">
+                                                    <span class="w-1.5 h-1.5 bg-green-500 rounded-full"></span>
+                                                    Selesai
+                                                </span>
+
+                                                <a href="{{ route('orders.receipt', $order->id) }}"
+                                                  target="_blank"
+                                                   class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold transition">
+
+                                                 🧾 Cetak Struk
+
+                                                </a>
+ 
+                                            </div>
                                         @elseif($order->status === 'dibatalkan')
                                             <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-rose-50 dark:bg-rose-900/30 text-rose-700 dark:text-rose-400 gap-1.5">
                                                 <span class="w-1.5 h-1.5 bg-rose-500 rounded-full"></span>

@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class TransactionController extends Controller
 {
@@ -164,4 +165,51 @@ class TransactionController extends Controller
             return redirect()->route('orders.history')->with('error', $e->getMessage());
         }
     }
+    // 6. Menampilkan halaman cetak struk
+public function receipt($order_id)
+{
+    $order = Order::with([
+        'user',
+        'orderDetails.product'
+    ])->findOrFail($order_id);
+
+    // Pastikan hanya pemilik transaksi yang bisa melihat
+    if ($order->user_id !== Auth::id()) {
+        abort(403, 'Aksi tidak sah.');
+    }
+
+    // Hanya transaksi selesai yang boleh dicetak
+    if ($order->status !== 'selesai') {
+        return redirect()->route('orders.history')
+            ->with('error', 'Struk hanya dapat dicetak setelah transaksi selesai.');
+    }
+
+    return view('buyer.receipt', compact('order'));
+}
+public function downloadReceipt($order_id)
+{
+    $order = Order::with([
+        'user',
+        'orderDetails.product.user'
+    ])->findOrFail($order_id);
+
+    // Pastikan hanya pemilik transaksi yang bisa download
+    if ($order->user_id != Auth::id()) {
+        abort(403);
+    }
+
+    // Hanya transaksi selesai yang boleh didownload
+    if ($order->status != 'selesai') {
+        return redirect()->route('orders.history')
+            ->with('error', 'Struk hanya dapat didownload setelah transaksi selesai.');
+    }
+
+    $pdf = Pdf::loadView('buyer.receipt', compact('order'));
+
+    return $pdf->download(
+        'Struk-PriceWise-' . str_pad($order->id, 5, '0', STR_PAD_LEFT) . '.pdf'
+    );
+}
+
+
 }

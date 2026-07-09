@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Struk Transaksi - Price Wise</title>
+
+    <style>
+
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+            font-family:Arial, Helvetica, sans-serif;
+        }
+
+        body{
+            background:#f3f4f6;
+            padding:40px;
+        }
+
+.print-button{
+
+    margin-top:40px;
+    display:flex;
+    justify-content:center;
+    gap:15px;
+    flex-wrap:wrap;
+
+}
+
+.print-button a,
+.print-button button{
+
+    display:inline-block;
+    text-decoration:none;
+    color:white;
+    padding:14px 28px;
+    border-radius:8px;
+    font-size:15px;
+    font-weight:bold;
+    border:none;
+    cursor:pointer;
+}
+
+.print-button a:hover,
+.print-button button:hover{
+
+    opacity:.9;
+
+}
+
+@media print{
+
+.print-button{
+
+display:none;
+
+}
+
+body{
+
+background:white;
+
+padding:0;
+
+}
+
+.invoice{
+
+box-shadow:none;
+
+}
+
+}
+        .invoice{
+
+            max-width:900px;
+            margin:auto;
+            background:white;
+            border-radius:12px;
+            overflow:hidden;
+            box-shadow:0 5px 20px rgba(0,0,0,.08);
+
+        }
+
+        .header{
+
+            background:#2563eb;
+            color:white;
+            padding:30px;
+
+        }
+
+        .header h1{
+
+            font-size:30px;
+
+        }
+
+        .header p{
+
+            margin-top:8px;
+            font-size:15px;
+
+        }
+
+        .content{
+
+            padding:30px;
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="invoice">
+
+    <div class="header">
+
+        <h1>PRICE WISE</h1>
+
+        <p>
+            Bukti Transaksi Rekening Bersama (Rekber)
+        </p>
+
+    </div>
+
+<div class="content">
+
+    <h2 style="margin-bottom:25px;">
+        Invoice Transaksi
+    </h2>
+
+    <table style="width:100%; border-collapse:collapse;">
+
+        <tr>
+            <td width="25%"><strong>Nomor Invoice</strong></td>
+            <td>
+                INV-PW-{{ date('Ymd') }}-{{ str_pad($order->id,5,'0',STR_PAD_LEFT) }}
+            </td>
+        </tr>
+
+        <tr>
+            <td><strong>ID Transaksi</strong></td>
+            <td>
+                #PW-{{ str_pad($order->id,5,'0',STR_PAD_LEFT) }}
+            </td>
+        </tr>
+
+        <tr>
+            <td><strong>Tanggal</strong></td>
+            <td>
+                {{ $order->created_at->format('d F Y H:i') }}
+            </td>
+        </tr>
+
+        <tr>
+            <td><strong>Status</strong></td>
+            <td style="color:green;">
+                {{ strtoupper($order->status) }}
+            </td>
+        </tr>
+
+    </table>
+
+    <hr style="margin:30px 0;">
+
+    <h3 style="margin-bottom:15px;">
+        Data Pembeli
+    </h3>
+
+    <table style="width:100%;">
+
+        <tr>
+            <td width="25%"><strong>Nama</strong></td>
+            <td>{{ $order->nama }}</td>
+        </tr>
+
+        <tr>
+            <td><strong>Email</strong></td>
+            <td>{{ $order->email }}</td>
+        </tr>
+
+        <tr>
+            <td><strong>Alamat</strong></td>
+            <td>{{ $order->alamat }}</td>
+        </tr>
+
+        <tr>
+            <td><strong>Ekspedisi</strong></td>
+            <td>{{ $order->ekspedisi }}</td>
+        </tr>
+
+        <tr>
+            <td><strong>Pembayaran</strong></td>
+            <td>{{ $order->metode_pembayaran }}</td>
+        </tr>
+
+    </table>
+    <hr style="margin:30px 0;">
+
+<h3 style="margin-bottom:15px;">
+    Detail Produk
+</h3>
+
+<table style="width:100%; border-collapse:collapse; border:1px solid #ddd;">
+
+    <thead style="background:#f3f4f6;">
+
+        <tr>
+
+            <th style="padding:12px;">Foto</th>
+
+            <th>Produk</th>
+
+            <th>Penjual</th>
+
+            <th>Qty</th>
+
+            <th>Harga</th>
+
+            <th>Subtotal</th>
+
+        </tr>
+
+    </thead>
+
+    <tbody>
+
+    @foreach($order->orderDetails as $detail)
+
+        <tr>
+
+            <td style="padding:12px; text-align:center;">
+
+                @if($detail->product->foto)
+
+                    <img
+                        src="{{ asset('storage/products/'.$detail->product->foto) }}"
+                        width="70"
+                        style="border-radius:8px;">
+
+                @endif
+
+            </td>
+
+            <td>
+
+                {{ $detail->product->nama_produk }}
+
+            </td>
+
+            <td>
+
+                {{ $detail->product->user->name }}
+
+            </td>
+
+            <td align="center">
+
+                {{ $detail->jumlah }}
+
+            </td>
+
+            <td>
+
+                Rp {{ number_format($detail->harga_saat_beli,0,',','.') }}
+
+            </td>
+
+            <td>
+
+                Rp {{ number_format($detail->jumlah * $detail->harga_saat_beli,0,',','.') }}
+
+            </td>
+
+        </tr>
+
+    @endforeach
+
+    </tbody>
+
+</table>
+
+<br>
+
+<div style="text-align:right;font-size:24px;font-weight:bold;">
+
+    TOTAL :
+    Rp {{ number_format($order->total_harga,0,',','.') }}
+
+</div>
+<hr style="margin:35px 0;">
+
+<div style="display:flex;justify-content:space-between;align-items:center;">
+
+    <div>
+
+        <h3>Status Transaksi</h3>
+
+        <p style="margin-top:10px;color:green;font-size:18px;font-weight:bold;">
+
+            ✔ TRANSAKSI SELESAI
+
+        </p>
+
+        <p style="margin-top:10px;color:#555;line-height:1.6;max-width:500px;">
+
+            Dana pembayaran telah berhasil diteruskan kepada penjual melalui
+            sistem Rekening Bersama (Rekber) Price Wise.
+            Barang telah diterima oleh pembeli dan transaksi dinyatakan selesai.
+
+        </p>
+
+    </div>
+
+</div>
+<div style="margin-top:60px;display:flex;justify-content:space-between;">
+
+    <div>
+
+        <strong>Price Wise Marketplace</strong>
+
+        <br><br>
+
+        Dokumen ini dibuat secara otomatis oleh sistem.
+
+    </div>
+
+    <div style="text-align:center;">
+
+        _______________________
+
+        <br>
+
+        Sistem Rekber Price Wise
+
+    </div>
+
+</div>
+
+</div>
+
+</div>
+<div class="print-button" style="display:flex;justify-content:center;gap:15px;flex-wrap:wrap;">
+
+    <!-- Tombol Kembali -->
+    <a href="{{ route('orders.history') }}"
+       style="text-decoration:none;background:#6b7280;color:white;padding:12px 25px;border-radius:8px;font-weight:bold;">
+
+        ← Kembali
+
+    </a>
+
+    <!-- Tombol Download PDF -->
+    <a href="{{ route('orders.download', $order->id) }}"
+       style="text-decoration:none;background:#16a34a;color:white;padding:12px 25px;border-radius:8px;font-weight:bold;">
+
+        📥 Download PDF
+
+    </a>
+
+    <!-- Tombol Cetak -->
+    <button onclick="window.print()"
+        style="background:#2563eb;color:white;padding:12px 25px;border:none;border-radius:8px;font-weight:bold;cursor:pointer;">
+
+        🖨 Cetak
+
+    </button>
+
+</div>
+</body>
+
+</html>

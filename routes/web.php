@@ -11,6 +11,7 @@ use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AdminDashboardController;
 
+
 // Rute dasar
 Route::get('/', function () {
     if (Auth::check()) {
@@ -62,6 +63,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/orders/{order_id}/payment', [TransactionController::class, 'payment'])->name('orders.payment');
     Route::post('/orders/{order_id}/pay', [TransactionController::class, 'pay'])->name('orders.pay');
     Route::get('/orders/history', [TransactionController::class, 'history'])->name('orders.history');
+    Route::get('/orders/{order_id}/receipt', [TransactionController::class, 'receipt'])
+    ->name('orders.receipt');
+    Route::get('/orders/{order_id}/download', [TransactionController::class, 'downloadReceipt'])
+    ->name('orders.download');
     Route::get('/seller/orders', [TransactionController::class, 'sellerOrders'])->name('seller.orders');
     // Buyer: konfirmasi bahwa barang telah diterima setelah status 'lunas'
     Route::post('/orders/{order_id}/confirm-receipt', [TransactionController::class, 'confirmReceipt'])->name('orders.confirmReceipt');
