@@ -113,6 +113,28 @@ box-shadow:none;
 
     </style>
 
+    @if(isset($for_pdf) && $for_pdf)
+    <style>
+        /* PDF-specific sizing to keep content on one A4 page */
+        @page { size: A4 portrait; margin: 10mm; }
+        body{ background:white; padding:6px; font-size:11px; line-height:1.1; }
+        .invoice{ max-width:780px; margin:auto; border-radius:4px; box-shadow:none; }
+        .header{ padding:8px 10px; }
+        .header h1{ font-size:16px; }
+        .header p{ font-size:10px; }
+        .content{ padding:8px 10px; }
+        table th, table td{ font-size:10px; padding:6px 8px; }
+        .print-button{ display:none !important; }
+        img{ width:48px; height:auto; }
+        hr{ margin:6px 0 !important; }
+        h2{ font-size:14px; margin-bottom:8px; }
+        h3{ font-size:12px; margin-bottom:6px; }
+        .total-amount{ font-size:18px; }
+        /* Try to avoid page breaks inside main blocks, but allow minimal breaks if necessary */
+        .invoice, .content, table, tbody, tr, td { page-break-inside: avoid; }
+    </style>
+    @endif
+
 </head>
 
 <body>
@@ -239,8 +261,15 @@ box-shadow:none;
 
                 @if($detail->product->foto)
 
+                    @php
+                        // Use local filesystem path for PDF rendering, and HTTP asset for browser
+                        $imgSrc = (isset($for_pdf) && $for_pdf)
+                            ? public_path('storage/products/'.$detail->product->foto)
+                            : asset('storage/products/'.$detail->product->foto);
+                    @endphp
+
                     <img
-                        src="{{ asset('storage/products/'.$detail->product->foto) }}"
+                        src="{{ $imgSrc }}"
                         width="70"
                         style="border-radius:8px;">
 
@@ -286,15 +315,11 @@ box-shadow:none;
 
 </table>
 
-<br>
-
-<div style="text-align:right;font-size:24px;font-weight:bold;">
-
+<div class="total-amount" style="text-align:right;font-weight:bold;">
     TOTAL :
     Rp {{ number_format($order->total_harga,0,',','.') }}
-
 </div>
-<hr style="margin:35px 0;">
+<hr>
 
 <div style="display:flex;justify-content:space-between;align-items:center;">
 
@@ -319,13 +344,15 @@ box-shadow:none;
     </div>
 
 </div>
-<div style="margin-top:60px;display:flex;justify-content:space-between;">
+<div style="margin-top:30px;display:flex;justify-content:space-between;">
 
     <div>
 
         <strong>Price Wise Marketplace</strong>
 
-        <br><br>
+        @unless(isset($for_pdf) && $for_pdf)
+            <br><br>
+        @endunless
 
         Dokumen ini dibuat secara otomatis oleh sistem.
 
@@ -333,11 +360,9 @@ box-shadow:none;
 
     <div style="text-align:center;">
 
-        _______________________
-
-        <br>
-
-        Sistem Rekber Price Wise
+        @unless(isset($for_pdf) && $for_pdf)
+            <br>
+        @endunless
 
     </div>
 
@@ -346,7 +371,8 @@ box-shadow:none;
 </div>
 
 </div>
-<div class="print-button" style="display:flex;justify-content:center;gap:15px;flex-wrap:wrap;">
+@unless(isset($for_pdf) && $for_pdf)
+<div class="print-button">
 
     <!-- Tombol Kembali -->
     <a href="{{ route('orders.history') }}"
@@ -373,6 +399,7 @@ box-shadow:none;
     </button>
 
 </div>
+@endunless
 </body>
 
 </html>

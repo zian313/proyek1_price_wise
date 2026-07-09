@@ -204,11 +204,17 @@ public function downloadReceipt($order_id)
             ->with('error', 'Struk hanya dapat didownload setelah transaksi selesai.');
     }
 
-    $pdf = Pdf::loadView('buyer.receipt', compact('order'));
+    // Enable remote assets (images) and HTML5 parser for DomPDF so images load correctly
+    Pdf::setOptions([
+        'isRemoteEnabled' => true,
+        'isHtml5ParserEnabled' => true,
+    ]);
 
-    return $pdf->download(
-        'Struk-PriceWise-' . str_pad($order->id, 5, '0', STR_PAD_LEFT) . '.pdf'
-    );
+    // Pass a flag to the view so the template can hide interactive buttons when rendering PDF
+    $pdf = Pdf::loadView('buyer.receipt', ['order' => $order, 'for_pdf' => true])
+        ->setPaper('a4', 'portrait');
+
+    return $pdf->download('Struk-PriceWise-' . str_pad($order->id, 5, '0', STR_PAD_LEFT) . '.pdf');
 }
 
 
