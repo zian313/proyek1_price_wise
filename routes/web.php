@@ -30,11 +30,7 @@ Route::get('/dashboard', function () {
 
     if (Auth::user()->role === 'seller') {
         $totalProducts = \App\Models\Product::where('user_id', Auth::id())->count();
-        $totalEarnings = \App\Models\OrderDetail::whereHas('product', function ($q) {
-            $q->where('user_id', Auth::id());
-        })->whereHas('order', function ($q) {
-            $q->where('status', 'lunas');
-        })->sum(DB::raw('jumlah * harga_saat_beli'));
+        $totalEarnings = Auth::user()->saldo; // Ambil saldo dari user database
         
         $recentOrdersCount = \App\Models\OrderDetail::whereHas('product', function ($q) {
             $q->where('user_id', Auth::id());
@@ -68,6 +64,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/orders/{order_id}/download', [TransactionController::class, 'downloadReceipt'])
     ->name('orders.download');
     Route::get('/seller/orders', [TransactionController::class, 'sellerOrders'])->name('seller.orders');
+    // Seller: tandai barang sudah dikirim
+    Route::post('/seller/orders/{order_id}/send-package', [TransactionController::class, 'sellerSendPackage'])->name('seller.orders.sendPackage');
     // Buyer: konfirmasi bahwa barang telah diterima setelah status 'lunas'
     Route::post('/orders/{order_id}/confirm-receipt', [TransactionController::class, 'confirmReceipt'])->name('orders.confirmReceipt');
 });
@@ -77,6 +75,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/admin/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
     Route::get('/admin/order/{id}', [AdminController::class, 'show'])->name('admin.order.detail');
     Route::post('/admin/order/{id}/verify', [AdminController::class, 'verify'])->name('admin.order.verify');
+    Route::post('/admin/order/{id}/send-package', [AdminController::class, 'sendPackage'])->name('admin.order.sendPackage');
 });
 
 require __DIR__.'/auth.php';

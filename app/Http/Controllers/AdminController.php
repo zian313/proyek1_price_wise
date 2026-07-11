@@ -54,4 +54,26 @@ class AdminController extends Controller
             return redirect('/admin/dashboard')->with('error', $e->getMessage());
         }
     }
+
+    // Aksi untuk tandai barang sudah dikirim
+    public function sendPackage(Request $request, $id)
+    {
+        $order = Order::findOrFail($id);
+
+        // Hanya bisa kirim barang jika status sudah 'lunas'
+        if ($order->status !== 'lunas') {
+            return redirect("/admin/order/{$id}")->with('error', 'Barang hanya bisa dikirim jika status pesanan sudah "Lunas".');
+        }
+
+        try {
+            $order->update([
+                'barang_dikirim' => true,
+                'tanggal_dikirim' => now(),
+            ]);
+
+            return redirect("/admin/order/{$id}")->with('success', 'Barang berhasil ditandai sebagai telah dikirim! Buyer akan mendapatkan notifikasi.');
+        } catch (\Exception $e) {
+            return redirect("/admin/order/{$id}")->with('error', $e->getMessage());
+        }
+    }
 }

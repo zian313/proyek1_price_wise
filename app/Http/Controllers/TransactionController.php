@@ -138,7 +138,7 @@ class TransactionController extends Controller
     // 5. Buyer konfirmasi bahwa barang telah diterima (hanya jika status sudah 'lunas')
     public function confirmReceipt(Request $request, $order_id)
     {
-        $order = Order::with('orderDetails')->findOrFail($order_id);
+        $order = Order::with('orderDetails.product')->findOrFail($order_id);
 
         // Pastikan order milik buyer yang sedang login
         if ($order->user_id !== Auth::id()) {
@@ -154,12 +154,30 @@ class TransactionController extends Controller
             Log::info('confirmReceipt called', ['order_id' => $order->id, 'user_id' => Auth::id(), 'status_before' => $order->status]);
 
             DB::transaction(function () use ($order) {
+                // Update order status menjadi 'selesai'
                 $order->update(['status' => 'selesai']);
+
+                // Tambahkan saldo ke seller berdasarkan order details
+                foreach ($order->orderDetails as $detail) {
+                    $seller = $detail->product->user; // Ambil seller dari product
+                    $totalAmount = $detail->jumlah * $detail->harga_saat_beli;
+                    
+                    // Update saldo seller
+                    $seller->increment('saldo', $totalAmount);
+                    
+                    Log::info('Saldo updated for seller', [
+                        'seller_id' => $seller->id,
+                        'seller_name' => $seller->name,
+                        'amount_added' => $totalAmount,
+                        'new_saldo' => $seller->saldo + $totalAmount,
+                        'order_id' => $order->id
+                    ]);
+                }
             });
 
             Log::info('confirmReceipt success', ['order_id' => $order->id, 'user_id' => Auth::id()]);
 
-            return redirect()->route('orders.history')->with('success', 'Terima kasih! Konfirmasi penerimaan berhasil.');
+            return redirect()->route('orders.history')->with('success', 'Terima kasih! Konfirmasi penerimaan berhasil. Saldo seller telah diperbarui.');
         } catch (\Exception $e) {
             Log::error('confirmReceipt error', ['order_id' => $order->id, 'error' => $e->getMessage()]);
             return redirect()->route('orders.history')->with('error', $e->getMessage());
@@ -217,5 +235,39 @@ public function downloadReceipt($order_id)
     return $pdf->download('Struk-PriceWise-' . str_pad($order->id, 5, '0', STR_PAD_LEFT) . '.pdf');
 }
 
+// Seller: Tandai barang sudah dikirim
+public function sellerSendPackage(Request $request, $order_id)
+{
+    $order = Order::with('orderDetails.product')->findOrFail($order_id);
+
+    // Pastikan order milik seller yang sedang login (cek apakah seller memiliki product di order ini)
+    $sellerHasProduct = false;
+    foreach ($order->orderDetails as $detail) {
+        if ($detail->product && $detail->product->user_id === Auth::id()) {
+            $sellerHasProduct = true;
+            break;
+        }
+    }
+
+    if (!$sellerHasProduct) {
+        return redirect()->route('seller.orders')->with('error', 'Anda tidak memiliki akses ke pesanan ini.');
+    }
+
+    // Hanya bisa kirim barang jika status sudah 'lunas'
+    if ($order->status !== 'lunas') {
+        return redirect()->route('seller.orders')->with('error', 'Barang hanya bisa dikirim jika status pesanan sudah "Lunas".');
+    }
+
+    try {
+        $order->update([
+            'barang_dikirim' => true,
+            'tanggal_dikirim' => now(),
+        ]);
+
+        return redirect()->route('seller.orders')->with('success', 'Barang berhasil ditandai sebagai telah dikirim! Buyer akan mendapatkan notifikasi.');
+    } catch (\Exception $e) {
+        return redirect()->route('seller.orders')->with('error', $e->getMessage());
+    }
+}
 
 }

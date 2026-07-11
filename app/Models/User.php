@@ -24,6 +24,7 @@ class User extends Authenticatable
         'bank_name',
         'no_rekening',
         'atas_nama',
+        'saldo',
     ];
 
     /**

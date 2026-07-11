@@ -46,34 +46,6 @@
                         <div class="text-4xl">🔔</div>
                     </div>
                 </div>
-
-                <!-- QUICK ACTIONS FOR SELLER -->
-                <div class="bg-[#1C2541] p-6 rounded-2xl border border-slate-800 shadow-xl mb-8">
-                    <h3 class="font-bold border-l-4 border-teal-500 pl-3 mb-4 text-white uppercase tracking-wider text-sm">Akses Cepat</h3>
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                        <a href="{{ route('products.index') }}" class="p-4 bg-slate-900/60 hover:bg-slate-900 border border-slate-800 hover:border-slate-700 rounded-xl flex items-center gap-3 transition">
-                            <span class="text-2xl">🛍️</span>
-                            <div>
-                                <span class="font-bold block text-sm">Kelola Produk</span>
-                                <span class="text-xs text-gray-400">Tambah & edit barang</span>
-                            </div>
-                        </a>
-                        <a href="{{ route('categories.index') }}" class="p-4 bg-slate-900/60 hover:bg-slate-900 border border-slate-800 hover:border-slate-700 rounded-xl flex items-center gap-3 transition">
-                            <span class="text-2xl">🗂️</span>
-                            <div>
-                                <span class="font-bold block text-sm">Kelola Kategori</span>
-                                <span class="text-xs text-gray-400">Ubah kategori produk</span>
-                            </div>
-                        </a>
-                        <a href="{{ route('seller.orders') }}" class="p-4 bg-slate-900/60 hover:bg-slate-900 border border-slate-800 hover:border-slate-700 rounded-xl flex items-center gap-3 transition">
-                            <span class="text-2xl">📩</span>
-                            <div>
-                                <span class="font-bold block text-sm">Pesanan Masuk</span>
-                                <span class="text-xs text-gray-400">Verifikasi bukti bayar</span>
-                            </div>
-                        </a>
-                    </div>
-                </div>
             @endif
 
             <!-- KATALOG BARANG -->

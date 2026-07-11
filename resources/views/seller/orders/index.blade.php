@@ -93,10 +93,31 @@
                                             <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400">
                                                 Menunggu Verifikasi Admin
                                             </span>
-                                        @elseif($order->status === 'lunas')
-                                            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-300">
-                                                Lunas
-                                            </span>
+                                        @elseif($order->status === 'lunas' && !$order->barang_dikirim)
+                                            <div class="flex flex-col items-center gap-2">
+                                                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-300">
+                                                    Lunas
+                                                </span>
+                                                <form action="{{ route('seller.orders.sendPackage', $order->id) }}" method="POST" onsubmit="return confirm('Tandai barang ini sebagai telah dikirim?');">
+                                                    @csrf
+                                                    <button type="submit" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold transition">
+                                                        🚚 Kirim Barang
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        @elseif($order->status === 'lunas' && $order->barang_dikirim)
+                                            <div class="flex flex-col items-center gap-1">
+                                                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300">
+                                                    🚚 Barang Dikirim
+                                                </span>
+                                                <span class="text-xs text-gray-400">
+                                                    @if($order->tanggal_dikirim)
+                                                        {{ \Carbon\Carbon::parse($order->tanggal_dikirim)->format('d M Y') }}
+                                                    @else
+                                                        -
+                                                    @endif
+                                                </span>
+                                            </div>
                                         @elseif($order->status === 'dibatalkan')
                                             <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-rose-50 dark:bg-rose-900/30 text-rose-700 dark:text-rose-300">
                                                 Dibatalkan

@@ -83,9 +83,6 @@
                                     <select name="metode_pembayaran" required class="w-full text-sm text-gray-300 bg-gray-900 border border-gray-800 rounded-xl px-4 py-3 focus:outline-none focus:border-[#00B4D8] transition cursor-pointer">
                                         <option value="" disabled selected>-- Pilih Bank (Rekber) --</option>
                                         <option value="M-Banking BCA">M-Banking BCA</option>
-                                        <option value="M-Banking Mandiri">M-Banking Mandiri</option>
-                                        <option value="M-Banking BNI">M-Banking BNI</option>
-                                        <option value="M-Banking BRI">M-Banking BRI</option>
                                     </select>
                                 </div>
                             </div>

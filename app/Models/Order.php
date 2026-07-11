@@ -15,7 +15,14 @@ class Order extends Model
         'email',
         'alamat',
         'ekspedisi',
-        'metode_pembayaran'
+        'metode_pembayaran',
+        'barang_dikirim',
+        'tanggal_dikirim'
+    ];
+
+    protected $casts = [
+        'barang_dikirim' => 'boolean',
+        'tanggal_dikirim' => 'datetime',
     ];
 
     // Relasi ke User (Buyer)

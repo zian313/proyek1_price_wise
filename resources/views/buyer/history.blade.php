@@ -94,15 +94,31 @@
                                             </span>
                                         @elseif($order->status === 'lunas')
                                             <div class="flex items-center gap-3">
-                                                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-400 gap-1.5">
-                                                    <span class="w-1.5 h-1.5 bg-green-500 rounded-full"></span>
-                                                    Lunas
-                                                </span>
+                                                @if($order->barang_dikirim)
+                                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400 gap-1.5">
+                                                        <span class="w-1.5 h-1.5 bg-purple-500 rounded-full"></span>
+                                                        🚚 Barang Dikirim
+                                                    </span>
+                                                    <small class="text-gray-400 text-xs">Dikirim: 
+                                                        @if($order->tanggal_dikirim)
+                                                            {{ \Carbon\Carbon::parse($order->tanggal_dikirim)->format('d M Y') }}
+                                                        @else
+                                                            -
+                                                        @endif
+                                                    </small>
+                                                @else
+                                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-400 gap-1.5">
+                                                        <span class="w-1.5 h-1.5 bg-green-500 rounded-full"></span>
+                                                        Lunas
+                                                    </span>
+                                                @endif
                                                 <!-- Tombol konfirmasi penerimaan barang -->
-                                                <form action="{{ route('orders.confirmReceipt', $order->id) }}" method="POST" onsubmit="return confirm('Konfirmasi bahwa barang sudah diterima?');">
-                                                    @csrf
-                                                    <button type="submit" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold transition">Konfirmasi Terima</button>
-                                                </form>
+                                                @if($order->barang_dikirim)
+                                                    <form action="{{ route('orders.confirmReceipt', $order->id) }}" method="POST" onsubmit="return confirm('Konfirmasi bahwa barang sudah diterima?');">
+                                                        @csrf
+                                                        <button type="submit" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold transition">✅ Terima Barang</button>
+                                                    </form>
+                                                @endif
                                             </div>
                                             @elseif($order->status === 'selesai')
 
