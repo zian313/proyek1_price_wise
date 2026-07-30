@@ -7,26 +7,20 @@ use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    // Menampilkan daftar semua kategori beserta jumlah produk di masing-masing kategori
     public function index()
     {
         $categories = Category::withCount('products')->get();
         return view('categories.index', compact('categories'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
+    // Menampilkan form untuk membuat kategori baru
     public function create()
     {
         return view('categories.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+    // Memproses dan menyimpan kategori baru ke database
     public function store(Request $request)
     {
         $request->validate([
@@ -40,25 +34,19 @@ class CategoryController extends Controller
         return redirect()->route('categories.index')->with('success', 'Kategori berhasil ditambahkan!');
     }
 
-    /**
-     * Display the specified resource.
-     */
+    // Menampilkan detail satu kategori (tidak digunakan / belum diimplementasi)
     public function show(Category $category)
     {
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
+    // Menampilkan form edit untuk kategori yang dipilih
     public function edit(Category $category)
     {
         return view('categories.edit', compact('category'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
+    // Memproses dan menyimpan perubahan data kategori ke database
     public function update(Request $request, Category $category)
     {
         $request->validate([
@@ -72,9 +60,7 @@ class CategoryController extends Controller
         return redirect()->route('categories.index')->with('success', 'Kategori berhasil diperbarui!');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
+    // Menghapus kategori dari database (hanya jika tidak ada produk yang menggunakannya)
     public function destroy(Category $category)
     {
         // Periksa apakah kategori masih digunakan oleh produk

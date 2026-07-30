@@ -6,10 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class Order extends Model
 {
+    // Kolom yang diizinkan diisi secara massal (mass assignment)
     protected $fillable = [
-        'user_id', 
-        'total_harga', 
-        'status', 
+        'user_id',
+        'total_harga',
+        'status',
         'bukti_transfer',
         'nama',
         'email',
@@ -20,6 +21,7 @@ class Order extends Model
         'tanggal_dikirim'
     ];
 
+    // Casting otomatis kolom ke tipe data yang sesuai
     protected $casts = [
         'barang_dikirim' => 'boolean',
         'tanggal_dikirim' => 'datetime',

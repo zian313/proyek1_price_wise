@@ -17,11 +17,12 @@ class ProductController extends Controller
         return view('seller.products.index', compact('products'));
     }
 
+    // 2. CREATE: Menampilkan form untuk menambahkan produk baru
     public function create()
-{
-    $categories = \App\Models\Category::all(); // Pastikan ambil data dari model
-    return view('seller.products.create', compact('categories'));
-}
+    {
+        $categories = \App\Models\Category::all(); // Pastikan ambil data dari model
+        return view('seller.products.create', compact('categories'));
+    }
 
     // 3. STORE: Logika untuk memproses dan menyimpan data produk baru ke database
     public function store(Request $request)
@@ -71,8 +72,8 @@ class ProductController extends Controller
     public function edit(string $id)
     {
         $product = Product::where('id', $id)->where('user_id', \Auth::id())->firstOrFail();
-        $categories = \App\Models\Category::all(); 
-        
+        $categories = \App\Models\Category::all();
+
         return view('seller.products.edit', compact('product', 'categories'));
     }
 
@@ -93,7 +94,7 @@ class ProductController extends Controller
             'atas_nama' => 'nullable|string|max:255',
         ]);
 
-        $nama_file_foto = $product->foto; 
+        $nama_file_foto = $product->foto;
 
         if ($request->hasFile('foto')) {
             if ($product->foto && file_exists(public_path('storage/products/' . $product->foto))) {
