@@ -68,6 +68,14 @@ Route::middleware('auth')->group(function () {
     Route::post('/seller/orders/{order_id}/send-package', [TransactionController::class, 'sellerSendPackage'])->name('seller.orders.sendPackage');
     // Buyer: konfirmasi bahwa barang telah diterima setelah status 'lunas'
     Route::post('/orders/{order_id}/confirm-receipt', [TransactionController::class, 'confirmReceipt'])->name('orders.confirmReceipt');
+    Route::post('/orders/{order_id}/complaint', [TransactionController::class, 'submitComplaint'])->name('orders.complaint');
+
+    // Buyer: Submit resi retur & rekening refund (setelah admin approve refund)
+    Route::post('/orders/{id}/submit-retur', [TransactionController::class, 'submitReturInfo'])->name('orders.submitRetur');
+    // Seller: Konfirmasi barang retur sudah diterima
+    Route::post('/seller/orders/{id}/confirm-retur', [TransactionController::class, 'sellerConfirmRetur'])->name('seller.orders.confirmRetur');
+    // Buyer: Konfirmasi dana refund sudah diterima / belum
+    Route::post('/orders/{id}/konfirmasi-refund', [TransactionController::class, 'buyerKonfirmasiRefund'])->name('orders.konfirmasiRefund');
 });
 
 // ADMIN ROUTES
@@ -76,6 +84,18 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/admin/order/{id}', [AdminController::class, 'show'])->name('admin.order.detail');
     Route::post('/admin/order/{id}/verify', [AdminController::class, 'verify'])->name('admin.order.verify');
     Route::post('/admin/order/{id}/send-package', [AdminController::class, 'sendPackage'])->name('admin.order.sendPackage');
+    Route::post('/admin/seller/{id}/approve', [AdminController::class, 'approveSeller'])->name('admin.seller.approve');
+    Route::post('/admin/seller/{id}/reject', [AdminController::class, 'rejectSeller'])->name('admin.seller.reject');
+    Route::post('/admin/order/{id}/mark-arrived', [AdminController::class, 'markAsArrived'])->name('admin.order.markArrived');
+    Route::post('/admin/order/{id}/update-resi', [AdminController::class, 'updateResi'])->name('admin.order.updateResi');
+    Route::post('/admin/order/{id}/auto-confirm', [AdminController::class, 'autoConfirm'])->name('admin.order.autoConfirm');
+    Route::post('/admin/order/{id}/approve-refund', [AdminController::class, 'approveRefund'])->name('admin.order.approveRefund');
+    Route::post('/admin/order/{id}/finalize-refund', [AdminController::class, 'finalizeRefundTransfer'])->name('admin.order.finalizeRefund');
+    Route::post('/admin/order/{id}/reject-refund', [AdminController::class, 'rejectRefund'])->name('admin.order.rejectRefund');
+    Route::post('/admin/order/{id}/send-note', [AdminController::class, 'sendAdminNote'])->name('admin.order.sendNote');
+    Route::post('/admin/order/{id}/mark-investigation', [AdminController::class, 'markAsInvestigation'])->name('admin.order.markInvestigation');
+    Route::post('/admin/order/{id}/resolve-investigation', [AdminController::class, 'resolveInvestigation'])->name('admin.order.resolveInvestigation');
+
 });
 
 require __DIR__.'/auth.php';

@@ -18,14 +18,21 @@ class ProductController extends Controller
     }
 
     public function create()
-{
-    $categories = \App\Models\Category::all(); // Pastikan ambil data dari model
-    return view('seller.products.create', compact('categories'));
-}
+    {
+        if (Auth::user()->role === 'seller' && Auth::user()->seller_status !== 'approved') {
+            return redirect()->route('dashboard')->with('error', 'Akun seller Anda masih belum disetujui Admin. Anda belum dapat menambahkan produk.');
+        }
+
+        $categories = \App\Models\Category::all(); // Pastikan ambil data dari model
+        return view('seller.products.create', compact('categories'));
+    }
 
     // 3. STORE: Logika untuk memproses dan menyimpan data produk baru ke database
     public function store(Request $request)
     {
+        if (Auth::user()->role === 'seller' && Auth::user()->seller_status !== 'approved') {
+            return redirect()->route('dashboard')->with('error', 'Akun seller Anda masih belum disetujui Admin. Anda belum dapat menambahkan produk.');
+        }
         // Validasi inputan form
         $request->validate([
             'category_id' => 'required|exists:categories,id',

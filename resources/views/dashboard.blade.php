@@ -17,6 +17,38 @@
             </div>
 
             @if(Auth::user()->role === 'seller')
+                @if(Auth::user()->seller_status === 'pending')
+                    <!-- BANNER PENDING APPROVAL SELLER -->
+                    <div class="mb-8 p-6 bg-amber-500/10 border-2 border-amber-500/50 rounded-2xl text-amber-200 shadow-xl backdrop-blur-sm">
+                        <div class="flex items-start gap-4">
+                            <div class="p-3 bg-amber-500/20 rounded-xl text-amber-400 text-3xl">
+                                ⏳
+                            </div>
+                            <div class="space-y-1">
+                                <h3 class="text-lg font-bold text-amber-400">Pendaftaran Akun Seller Sedang Ditinjau Admin</h3>
+                                <p class="text-sm text-slate-300 leading-relaxed">
+                                    Terima kasih telah mendaftar sebagai Seller di Price Wise. Berkas <strong>Foto KTP</strong>, <strong>Selfie KTP</strong>, dan <strong>Alamat Lengkap Toko</strong> Anda sedang dalam tahap verifikasi oleh tim Admin. Fitur penambahan produk dan penjualan akan otomatis aktif setelah disetujui.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                @elseif(Auth::user()->seller_status === 'rejected')
+                    <!-- BANNER REJECTED SELLER -->
+                    <div class="mb-8 p-6 bg-rose-500/10 border-2 border-rose-500/50 rounded-2xl text-rose-200 shadow-xl backdrop-blur-sm">
+                        <div class="flex items-start gap-4">
+                            <div class="p-3 bg-rose-500/20 rounded-xl text-rose-400 text-3xl">
+                                ❌
+                            </div>
+                            <div class="space-y-1">
+                                <h3 class="text-lg font-bold text-rose-400">Pengajuan Akun Seller Ditolak</h3>
+                                <p class="text-sm text-slate-300 leading-relaxed">
+                                    Mohon maaf, pengajuan pendaftaran seller Anda ditolak oleh Admin karena data tidak sesuai atau berkas KTP kurang jelas. Silakan hubungi tim dukungan Price Wise.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                @endif
+
                 <!-- STATS GRID FOR SELLER -->
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                     <!-- Total Produk -->

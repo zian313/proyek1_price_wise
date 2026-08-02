@@ -27,7 +27,7 @@
                     <input id="remember_me" type="checkbox" class="rounded border-slate-700 bg-slate-950 text-teal-500 shadow-sm focus:border-teal-500 focus:ring-teal-500" name="remember">
                     {{ __('ingatkan saya') }}
                 </label>
-                <!-- Lupa password dihapus -->
+        
             </div>
 
             <x-primary-button class="w-full bg-teal-600 hover:bg-teal-500 text-white">

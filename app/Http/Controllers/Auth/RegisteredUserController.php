@@ -30,19 +30,48 @@ class RegisteredUserController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
-        $request->validate([
+        $rules = [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'role' => ['required', 'in:buyer,seller'],
-        ]);
+        ];
 
-        $user = User::create([
+        if ($request->role === 'seller') {
+            $rules['nama_ktp'] = ['required', 'string', 'max:255'];
+            $rules['alamat_lengkap'] = ['required', 'string', 'max:1000'];
+            $rules['foto_ktp'] = ['required', 'image', 'mimes:jpeg,png,jpg', 'max:2048'];
+            $rules['selfie_ktp'] = ['required', 'image', 'mimes:jpeg,png,jpg', 'max:2048'];
+        }
+
+        $request->validate($rules);
+
+        $userData = [
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'role' => $request->role,
-        ]);
+            'seller_status' => $request->role === 'seller' ? 'pending' : 'approved',
+        ];
+
+        if ($request->role === 'seller') {
+            $userData['nama_ktp'] = $request->nama_ktp;
+            $userData['alamat_lengkap'] = $request->alamat_lengkap;
+
+            if ($request->hasFile('foto_ktp')) {
+                $fotoKtpName = time() . '_ktp_' . uniqid() . '.' . $request->file('foto_ktp')->getClientOriginalExtension();
+                $request->file('foto_ktp')->storeAs('public/seller_docs', $fotoKtpName);
+                $userData['foto_ktp'] = $fotoKtpName;
+            }
+
+            if ($request->hasFile('selfie_ktp')) {
+                $selfieKtpName = time() . '_selfie_' . uniqid() . '.' . $request->file('selfie_ktp')->getClientOriginalExtension();
+                $request->file('selfie_ktp')->storeAs('public/seller_docs', $selfieKtpName);
+                $userData['selfie_ktp'] = $selfieKtpName;
+            }
+        }
+
+        $user = User::create($userData);
 
         event(new Registered($user));
 

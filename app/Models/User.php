@@ -25,6 +25,11 @@ class User extends Authenticatable
         'no_rekening',
         'atas_nama',
         'saldo',
+        'nama_ktp',
+        'alamat_lengkap',
+        'foto_ktp',
+        'selfie_ktp',
+        'seller_status',
     ];
 
     /**

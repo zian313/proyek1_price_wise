@@ -31,14 +31,14 @@
     </style>
 </head>
 
-<body class="font-sans text-white antialiased bg-blue-950 min-h-screen relative overflow-hidden">
+<body class="font-sans text-white antialiased bg-blue-950 min-h-screen relative">
 
     <!-- Blue Ambient Glow -->
-    <div class="absolute -top-40 -left-40 w-96 h-96 bg-blue-500/30 rounded-full blur-3xl pointer-events-none"></div>
-    <div class="absolute top-1/3 -right-40 w-96 h-96 bg-sky-500/30 rounded-full blur-3xl pointer-events-none"></div>
-    <div class="absolute -bottom-40 left-1/4 w-96 h-96 bg-indigo-500/30 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="fixed -top-40 -left-40 w-96 h-96 bg-blue-500/30 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="fixed top-1/3 -right-40 w-96 h-96 bg-sky-500/30 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="fixed -bottom-40 left-1/4 w-96 h-96 bg-indigo-500/30 rounded-full blur-3xl pointer-events-none"></div>
 
-    <div class="min-h-screen flex flex-col justify-center items-center px-4 py-8 relative z-10">
+    <div class="min-h-screen flex flex-col justify-center items-center px-4 py-12 relative z-10">
 
         <!-- Logo -->
         <div class="mb-6">
@@ -58,7 +58,7 @@
         </div>
 
         <!-- Glass Card -->
-        <div class="w-full sm:max-w-md mt-4 p-8 bg-blue-900/40 backdrop-blur-xl border border-blue-700 rounded-3xl shadow-2xl shadow-blue-900/50 relative overflow-hidden">
+        <div class="w-full sm:max-w-md mt-4 p-8 bg-blue-900/40 backdrop-blur-xl border border-blue-700 rounded-3xl shadow-2xl shadow-blue-900/50 relative">
             {{ $slot }}
         </div>
 
