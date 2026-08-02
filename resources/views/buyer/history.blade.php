@@ -249,7 +249,7 @@
                                                     @endif
                                                     {{-- Tombol Konfirmasi --}}
                                                     <div class="flex gap-2 pt-1">
-                                                        <form action="{{ route('orders.konfirmasiRefund', $order->id) }}" method="POST" class="flex-1" onsubmit="return confirm('Konfirmasi bahwa dana refund sudah masuk ke rekening Anda?')">
+                                                        <form action="{{ route('orders.konfirmasiRefund', $order->id) }}" method="POST" class="flex-1" onsubmit="confirmSubmit(event, 'Konfirmasi bahwa dana refund sudah masuk ke rekening Anda?', 'Ya, Sudah Masuk', 'success', '#10b981')">
                                                             @csrf
                                                             <input type="hidden" name="konfirmasi" value="sudah">
                                                             <button type="submit" class="w-full py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-black transition">
@@ -320,10 +320,18 @@
                                             </div>
 
                                         @elseif($order->status === 'dibatalkan')
-                                            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-rose-50 dark:bg-rose-900/30 text-rose-700 dark:text-rose-400 gap-1.5">
-                                                <span class="w-1.5 h-1.5 bg-rose-500 rounded-full"></span>
-                                                Dibatalkan
-                                            </span>
+                                            <div class="flex flex-col gap-2 text-left">
+                                                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-rose-50 dark:bg-rose-900/30 text-rose-700 dark:text-rose-400 gap-1.5 w-fit">
+                                                    <span class="w-1.5 h-1.5 bg-rose-500 rounded-full"></span>
+                                                    Transaksi Dibatalkan
+                                                </span>
+                                                @if($order->admin_note)
+                                                    <div class="bg-rose-900/40 border-l-[3px] border-rose-500 rounded-r-xl p-2.5 max-w-xs">
+                                                        <p class="text-[10px] font-black text-rose-300 uppercase tracking-wider mb-0.5">⚠️ Alasan Pembatalan:</p>
+                                                        <p class="text-[11px] text-rose-100/90 leading-relaxed">{{ $order->admin_note }}</p>
+                                                    </div>
+                                                @endif
+                                            </div>
 
                                         @elseif(!in_array($order->status, ['komplain','refund_disetujui','barang_diretur','menunggu_konfirmasi_refund','investigasi','keterlambatan','selesai','dibatalkan']) && ($order->status === 'lunas' || $order->barang_dikirim || $order->status === 'dikirim'))
                                             {{-- BARANG DIKIRIM / LUNAS --}}
@@ -362,7 +370,7 @@
                                                 {{-- Tombol aksi --}}
                                                 @if($order->barang_dikirim || $order->status === 'dikirim')
                                                     <div class="flex items-center gap-2 mt-1">
-                                                        <form action="{{ route('orders.confirmReceipt', $order->id) }}" method="POST" onsubmit="return confirm('Konfirmasi barang sudah Anda terima?');">
+                                                        <form action="{{ route('orders.confirmReceipt', $order->id) }}" method="POST" onsubmit="confirmSubmit(event, 'Konfirmasi barang sudah Anda terima?', 'Terima Barang', 'success', '#10b981')">
                                                             @csrf
                                                             <button type="submit" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold transition">✅ Terima Barang</button>
                                                         </form>
@@ -423,9 +431,9 @@
                         <!-- Info file yang dipilih -->
                         <div id="videoNameDisplay" class="mt-2 text-xs font-bold text-teal-400 hidden"></div>
                         
-                        <!-- Video Preview Kecil -->
-                        <div id="videoPreviewContainer" class="mt-3 hidden">
-                            <video id="videoPreview" controls class="w-full max-h-40 rounded-lg border border-slate-700 bg-black"></video>
+                        <!-- Video Preview Kecil (Ditambahkan style inline agar ukurannya tidak membesar) -->
+                        <div id="videoPreviewContainer" class="mt-3 hidden" style="width: 100%; max-height: 200px; display: flex; justify-content: center; background: #000; border-radius: 0.5rem; overflow: hidden; border: 1px solid #334155;">
+                            <video id="videoPreview" controls style="max-height: 200px; max-width: 100%; object-fit: contain;"></video>
                         </div>
                     </div>
 

@@ -20,7 +20,9 @@ class AdminDashboardController extends Controller
             ->whereIn('status', ['komplain', 'refund_disetujui', 'barang_diretur'])
             ->latest()
             ->get();
+        // Permintaan Penarikan Dana Seller (Withdrawal)
+        $pendingWithdrawals = \App\Models\Withdrawal::with('user')->where('status', 'pending')->latest()->get();
 
-        return view('admin.dashboard', compact('orders', 'pendingSellers', 'allSellers', 'complaintOrders'));
+        return view('admin.dashboard', compact('orders', 'pendingSellers', 'allSellers', 'complaintOrders', 'pendingWithdrawals'));
     }
 }

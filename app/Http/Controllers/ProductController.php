@@ -12,21 +12,21 @@ class ProductController extends Controller
     // 1. READ: Menampilkan semua produk milik Seller yang sedang login
     public function index()
     {
+        $user = Auth::user();
         // Hanya mengambil produk yang diinput oleh user/seller yang sedang login saat ini
-        $products = Product::where('user_id', Auth::id())->get();
-        return view('seller.products.index', compact('products'));
+        $products = Product::where('user_id', $user->id)->get();
+        // Mengambil riwayat penarikan dana
+        $withdrawals = \App\Models\Withdrawal::where('user_id', $user->id)->latest()->get();
+        return view('seller.products.index', compact('products', 'withdrawals', 'user'));
     }
 
     // 2. CREATE: Menampilkan form untuk menambahkan produk baru
     public function create()
     {
-<<<<<<< HEAD
         if (Auth::user()->role === 'seller' && Auth::user()->seller_status !== 'approved') {
             return redirect()->route('dashboard')->with('error', 'Akun seller Anda masih belum disetujui Admin. Anda belum dapat menambahkan produk.');
         }
 
-=======
->>>>>>> bf148b65a4b4ebe26ba94ae1a78d2ebd6cd06f21
         $categories = \App\Models\Category::all(); // Pastikan ambil data dari model
         return view('seller.products.create', compact('categories'));
     }
@@ -44,20 +44,23 @@ class ProductController extends Controller
             'deskripsi' => 'required|string',
             'harga' => 'required|numeric|min:0',
             'stok' => 'required|numeric|min:0',
-            'foto' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048', // Maksimal 2MB
+            'foto' => 'nullable|array|max:10',
+            'foto.*' => 'image|mimes:jpeg,png,jpg,webp|max:2048', // Maksimal 2MB per foto
             'bank_name' => 'nullable|string|max:255',
             'no_rekening' => 'nullable|string|max:255',
             'atas_nama' => 'nullable|string|max:255',
         ]);
 
-        $nama_file_foto = null;
-        // Logika jika seller mengunggah foto produk
+        $foto_paths = [];
+        // Logika jika seller mengunggah batch foto produk
         if ($request->hasFile('foto')) {
-            $file = $request->file('foto');
-            // Membuat nama file unik berdasarkan waktu agar tidak bentrok (misal: 171871234_sepatu.jpg)
-            $nama_file_foto = time() . '_' . $file->getClientOriginalName();
-            // Pindahkan file ke folder public/storage/products
-            $file->move(public_path('storage/products'), $nama_file_foto);
+            foreach ($request->file('foto') as $file) {
+                // Membuat nama file unik berdasarkan waktu agar tidak bentrok
+                $nama_file_foto = time() . '_' . uniqid() . '_' . $file->getClientOriginalName();
+                // Pindahkan file ke folder public/storage/products
+                $file->move(public_path('storage/products'), $nama_file_foto);
+                $foto_paths[] = $nama_file_foto;
+            }
         }
 
         // Simpan data ke database lewat Model Product
@@ -68,7 +71,7 @@ class ProductController extends Controller
             'deskripsi' => $request->deskripsi,
             'harga' => $request->harga,
             'stok' => $request->stok,
-            'foto' => $nama_file_foto,
+            'foto' => !empty($foto_paths) ? $foto_paths : null,
             'bank_name' => $request->bank_name,
             'no_rekening' => $request->no_rekening,
             'atas_nama' => $request->atas_nama,
@@ -98,22 +101,31 @@ class ProductController extends Controller
             'deskripsi' => 'required|string',
             'harga' => 'required|numeric|min:0',
             'stok' => 'required|numeric|min:0',
-            'foto' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'foto' => 'nullable|array|max:10',
+            'foto.*' => 'image|mimes:jpeg,png,jpg,webp|max:2048',
             'bank_name' => 'nullable|string|max:255',
             'no_rekening' => 'nullable|string|max:255',
             'atas_nama' => 'nullable|string|max:255',
         ]);
 
-        $nama_file_foto = $product->foto;
+        $foto_paths = $product->fotos;
 
         if ($request->hasFile('foto')) {
-            if ($product->foto && file_exists(public_path('storage/products/' . $product->foto))) {
-                unlink(public_path('storage/products/' . $product->foto));
+            // Hapus file-file lama terlebih dahulu
+            foreach ($product->fotos as $old_foto) {
+                if ($old_foto && file_exists(public_path('storage/products/' . $old_foto))) {
+                    unlink(public_path('storage/products/' . $old_foto));
+                }
             }
 
-            $file = $request->file('foto');
-            $nama_file_foto = time() . '_' . $file->getClientOriginalName();
-            $file->move(public_path('storage/products'), $nama_file_foto);
+            $foto_paths = [];
+
+            // Simpan file-file baru
+            foreach ($request->file('foto') as $file) {
+                $name = time() . '_' . uniqid() . '_' . $file->getClientOriginalName();
+                $file->move(public_path('storage/products'), $name);
+                $foto_paths[] = $name;
+            }
         }
 
         $product->update([
@@ -122,7 +134,7 @@ class ProductController extends Controller
             'deskripsi' => $request->deskripsi,
             'harga' => $request->harga,
             'stok' => $request->stok,
-            'foto' => $nama_file_foto,
+            'foto' => !empty($foto_paths) ? $foto_paths : null,
             'bank_name' => $request->bank_name,
             'no_rekening' => $request->no_rekening,
             'atas_nama' => $request->atas_nama,
@@ -136,8 +148,10 @@ class ProductController extends Controller
     {
         $product = Product::where('id', $id)->where('user_id', \Auth::id())->firstOrFail();
 
-        if ($product->foto && file_exists(public_path('storage/products/' . $product->foto))) {
-            unlink(public_path('storage/products/' . $product->foto));
+        foreach ($product->fotos as $foto) {
+            if ($foto && file_exists(public_path('storage/products/' . $foto))) {
+                unlink(public_path('storage/products/' . $foto));
+            }
         }
 
         $product->delete();

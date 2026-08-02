@@ -26,6 +26,7 @@ class User extends Authenticatable
         'foto_ktp',
         'selfie_ktp',
         'seller_status',
+        'rejection_reason',
     ];
 
     // Kolom yang disembunyikan ketika model dikonversi ke array/JSON
@@ -41,5 +42,10 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function withdrawals()
+    {
+        return $this->hasMany(Withdrawal::class);
     }
 }

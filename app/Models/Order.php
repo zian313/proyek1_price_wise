@@ -33,17 +33,20 @@ class Order extends Model
         'no_resi_retur',
         'tanggal_retur',
         'retur_diterima_seller',
+        'bukti_transfer_refund',
+        'refund_dikonfirmasi_buyer',
     ];
 
     // Casting otomatis kolom ke tipe data yang sesuai
     protected $casts = [
-        'barang_dikirim'        => 'boolean',
-        'tanggal_dikirim'       => 'datetime',
-        'waktu_sampai'          => 'datetime',
-        'estimasi_tiba'         => 'date',
-        'admin_note_at'         => 'datetime',
-        'tanggal_retur'         => 'datetime',
+        'barang_dikirim' => 'boolean',
+        'tanggal_dikirim' => 'datetime',
+        'waktu_sampai' => 'datetime',
+        'estimasi_tiba' => 'date',
+        'admin_note_at' => 'datetime',
+        'tanggal_retur' => 'datetime',
         'retur_diterima_seller' => 'boolean',
+        'refund_dikonfirmasi_buyer' => 'boolean',
     ];
 
     // Relasi ke User (Buyer)

@@ -20,7 +20,18 @@ Route::middleware('guest')->group(function () {
 
     Route::post('login', [AuthenticatedSessionController::class, 'store']);
 
-    // Password reset routes removed: feature disabled
+    // Fitur Reset Password Sederhana (Direct Reset)
+    Route::get('forgot-password', [\App\Http\Controllers\Auth\SimplePasswordResetController::class, 'createEmailForm'])
+        ->name('password.request');
+
+    Route::post('forgot-password', [\App\Http\Controllers\Auth\SimplePasswordResetController::class, 'storeEmailForm'])
+        ->name('password.email');
+
+    Route::get('reset-password', [\App\Http\Controllers\Auth\SimplePasswordResetController::class, 'createResetForm'])
+        ->name('password.reset');
+
+    Route::post('reset-password', [\App\Http\Controllers\Auth\SimplePasswordResetController::class, 'storeResetForm'])
+        ->name('password.store');
 });
 
 Route::middleware('auth')->group(function () {

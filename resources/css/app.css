@@ -10,7 +10,7 @@
     body {
         @apply bg-slate-50 text-slate-900 antialiased;
         background-image: radial-gradient(circle at top left, rgba(16, 185, 129, 0.12), transparent 30%),
-                          radial-gradient(circle at bottom right, rgba(14, 165, 233, 0.12), transparent 25%);
+            radial-gradient(circle at bottom right, rgba(14, 165, 233, 0.12), transparent 25%);
     }
 
     .dark body {
@@ -18,6 +18,33 @@
     }
 
     ::selection {
-        @apply bg-teal-500/30 text-slate-900;
+        @apply bg-teal-500/30 text-slate-100;
+    }
+
+    /* Global UI Liveliness: Make buttons satisfying to click */
+    button,
+    a.btn,
+    input[type="submit"] {
+        @apply transition-transform duration-200 active:scale-95;
+    }
+}
+
+@layer components {
+
+    /* Utility object for cards used throughout the dashboard to bring them to life on approach */
+    .hover-card-lively,
+    .bg-white.rounded-2xl,
+    .bg-gray-800.rounded-2xl,
+    .bg-white.rounded-xl,
+    .bg-gray-800.rounded-xl {
+        @apply transition-all duration-300;
+    }
+
+    .hover-card-lively:hover,
+    .bg-white.rounded-2xl:hover,
+    .bg-gray-800.rounded-2xl:hover,
+    .bg-white.rounded-xl:hover,
+    .bg-gray-800.rounded-xl:hover {
+        @apply -translate-y-[2px] shadow-xl shadow-indigo-500/10;
     }
 }

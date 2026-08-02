@@ -36,7 +36,6 @@
                 </div>
             @endif
 
-<<<<<<< HEAD
             {{-- ============================================================
                  BANNER PERINGATAN REFUND — Muncul jika ada komplain aktif
             ============================================================= --}}
@@ -70,10 +69,6 @@
             @endif
 
             <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
-=======
-            <div
-                class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
->>>>>>> bf148b65a4b4ebe26ba94ae1a78d2ebd6cd06f21
                 <div class="p-6 border-b border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/50">
                     <h3 class="text-lg font-bold text-gray-800 dark:text-white">Kelola Pesanan</h3>
                     <p class="text-xs text-gray-400 mt-1">Periksa bukti pembayaran pembeli dan ubah status pesanan.</p>
@@ -94,13 +89,12 @@
                         </thead>
                         <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
                             @forelse($orderDetails as $detail)
-                                @php 
-                                                                    // Ambil data order dan produk dari relasi order detail
+                                @php
+                                    // Ambil data order dan produk dari relasi order detail
                                     $order = $detail->order;
                                     $product = $detail->product;
                                     $isKomplain = $order->status === 'komplain';
                                 @endphp
-<<<<<<< HEAD
                                 <tr class="hover:bg-gray-50/50 dark:hover:bg-gray-900/20 text-sm text-gray-700 dark:text-gray-300 transition duration-150 {{ $isKomplain ? 'bg-rose-500/5 border-l-4 border-rose-500' : '' }}">
                                     <td class="px-6 py-4 font-mono font-bold text-gray-400">
                                         #PW-{{ str_pad($order->id, 5, '0', STR_PAD_LEFT) }}
@@ -108,12 +102,6 @@
                                             <span class="block mt-1 text-[10px] font-black text-rose-400 bg-rose-500/10 border border-rose-500/20 px-1.5 py-0.5 rounded uppercase w-fit">⚠️ Refund</span>
                                         @endif
                                     </td>
-=======
-                                <tr
-                                    class="hover:bg-gray-50/50 dark:hover:bg-gray-900/20 text-sm text-gray-700 dark:text-gray-300 transition duration-150">
-                                    <td class="px-6 py-4 font-mono font-bold text-gray-400">
-                                        #PW-{{ str_pad($order->id, 5, '0', STR_PAD_LEFT) }}</td>
->>>>>>> bf148b65a4b4ebe26ba94ae1a78d2ebd6cd06f21
                                     <td class="px-6 py-4">
                                         <div class="font-bold text-gray-800 dark:text-white">
                                             {{ $order->nama ?? $order->user->name }}</div>
@@ -170,7 +158,6 @@
                                     </td>
                                     <!-- Kolom Status & Aksi Seller -->
                                     <td class="px-6 py-4 text-center">
-<<<<<<< HEAD
                                         @if(in_array($order->status, ['komplain', 'refund_disetujui', 'barang_diretur', 'menunggu_konfirmasi_refund']) || ($order->status === 'dibatalkan' && $order->alasan_komplain))
                                             {{-- STATUS KOMPLAIN & RETUR: TAMPILKAN ALASAN, VIDEO UNBOXING, & MONITORING RESI RETUR UNTUK SELLER --}}
                                             <div class="flex flex-col items-start gap-2.5 text-left min-w-[240px]">
@@ -211,7 +198,7 @@
                                                         <p class="text-[10px] font-black text-indigo-300 uppercase tracking-wider mb-1.5 flex items-center gap-1">
                                                             📹 Bukti Video Unboxing Buyer:
                                                         </p>
-                                                        <video controls class="w-full h-28 object-cover rounded-lg bg-black border border-slate-800">
+                                                        <video controls class="w-full rounded-lg bg-black border border-slate-800" style="max-height: 250px; object-fit: contain;">
                                                             <source src="{{ asset('storage/unboxing_videos/' . $order->video_unboxing) }}">
                                                             Browser tidak mendukung pemutar video.
                                                         </video>
@@ -234,7 +221,7 @@
                                                             </span>
                                                         </div>
                                                         @if(!$order->retur_diterima_seller)
-                                                            <form action="{{ route('seller.orders.confirmRetur', $order->id) }}" method="POST" onsubmit="return confirm('Konfirmasi bahwa barang retur dari buyer sudah sampai di toko/rumah Anda?');">
+                                                            <form action="{{ route('seller.orders.confirmRetur', $order->id) }}" method="POST" onsubmit="confirmSubmit(event, 'Konfirmasi bahwa barang retur dari buyer sudah sampai di toko/rumah Anda? Setelah ini Admin akan mentransfer dana refund.', 'Ya, Sudah Sampai', 'info', '#059669')">
                                                                 @csrf
                                                                 <button type="submit" class="w-full py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-bold transition">
                                                                     ✅ Konfirmasi Barang Retur Diterima
@@ -250,12 +237,6 @@
                                             </div>
                                         @elseif($order->status === 'menunggu_verifikasi')
                                             <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400">
-=======
-                                        {{-- Status: Menunggu Admin --}}
-                                        @if($order->status === 'menunggu_verifikasi')
-                                            <span
-                                                class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400">
->>>>>>> bf148b65a4b4ebe26ba94ae1a78d2ebd6cd06f21
                                                 Menunggu Verifikasi Admin
                                             </span>
                                             {{-- Status Lunas & belum dikirim: tampilkan tombol kirim barang --}}
@@ -265,29 +246,25 @@
                                                     class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-300">
                                                     Lunas
                                                 </span>
-<<<<<<< HEAD
-                                                <form action="{{ route('seller.orders.sendPackage', $order->id) }}" method="POST" class="flex flex-col items-center gap-2">
+                                                <form action="{{ route('seller.orders.sendPackage', $order->id) }}" method="POST" class="flex flex-col items-center gap-2" onsubmit="confirmSubmit(event, 'Tandai barang ini sebagai telah dikirim?', 'Ya, Dikirim', 'info', '#2563eb')">
                                                     @csrf
                                                     <input type="text" name="no_resi" placeholder="Masukkan No. Resi" required class="text-xs bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1 text-white focus:border-teal-500 focus:ring-teal-500 w-40 text-center" />
-                                                    <button type="submit" onclick="return confirm('Tandai barang ini sebagai telah dikirim?');" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold transition">
-=======
-                                                <form action="{{ route('seller.orders.sendPackage', $order->id) }}"
-                                                    method="POST"
-                                                    onsubmit="return confirm('Tandai barang ini sebagai telah dikirim?');">
-                                                    @csrf
-                                                    <button type="submit"
-                                                        class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold transition">
->>>>>>> bf148b65a4b4ebe26ba94ae1a78d2ebd6cd06f21
+                                                    <button type="submit" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold transition">
                                                         🚚 Kirim Barang
                                                     </button>
                                                 </form>
                                             </div>
-<<<<<<< HEAD
-                                        @elseif($order->barang_dikirim || $order->status === 'dikirim')
-=======
+                                        @elseif($order->status === 'dibatalkan')
+                                            <span
+                                                class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-rose-50 dark:bg-rose-900/30 text-rose-700 dark:text-rose-300">
+                                                Dibatalkan
+                                            </span>
+                                        @elseif($order->status === 'selesai')
+                                            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-teal-50 dark:bg-teal-900/30 text-teal-700 dark:text-teal-300">
+                                                ✅ Selesai — Saldo Diterima
+                                            </span>
                                             {{-- Status sudah dikirim: tampilkan label dan tanggal pengiriman --}}
-                                        @elseif($order->status === 'lunas' && $order->barang_dikirim)
->>>>>>> bf148b65a4b4ebe26ba94ae1a78d2ebd6cd06f21
+                                        @elseif($order->barang_dikirim || $order->status === 'dikirim')
                                             <div class="flex flex-col items-center gap-1">
                                                 <span
                                                     class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300">
@@ -304,15 +281,6 @@
                                                     @endif
                                                 </span>
                                             </div>
-                                        @elseif($order->status === 'dibatalkan')
-                                            <span
-                                                class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-rose-50 dark:bg-rose-900/30 text-rose-700 dark:text-rose-300">
-                                                Dibatalkan
-                                            </span>
-                                        @elseif($order->status === 'selesai')
-                                            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-teal-50 dark:bg-teal-900/30 text-teal-700 dark:text-teal-300">
-                                                ✅ Selesai — Saldo Diterima
-                                            </span>
                                         @else
                                             <span
                                                 class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300">
@@ -341,9 +309,4 @@
 
         </div>
     </div>
-<<<<<<< HEAD
 </x-app-layout>
-
-=======
-</x-app-layout>
->>>>>>> bf148b65a4b4ebe26ba94ae1a78d2ebd6cd06f21

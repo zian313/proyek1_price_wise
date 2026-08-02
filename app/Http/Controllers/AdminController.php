@@ -25,9 +25,10 @@ class AdminController extends Controller
     public function verify(Request $request, $id)
     {
         $order = Order::findOrFail($id);
-        
+
         $request->validate([
             'status' => 'required|in:lunas,dibatalkan',
+            'admin_note' => 'required_if:status,dibatalkan|nullable|string|max:1000'
         ]);
 
         try {
@@ -45,7 +46,10 @@ class AdminController extends Controller
                         }
                     }
                 } else {
-                    $order->update(['status' => 'dibatalkan']);
+                    $order->update([
+                        'status' => 'dibatalkan',
+                        'admin_note' => $request->admin_note
+                    ]);
                 }
             });
 
@@ -87,10 +91,17 @@ class AdminController extends Controller
     }
 
     // Tolak pendaftaran seller
-    public function rejectSeller($id)
+    public function rejectSeller(Request $request, $id)
     {
+        $request->validate([
+            'rejection_reason' => 'required|string|max:1000',
+        ]);
+
         $seller = \App\Models\User::where('role', 'seller')->findOrFail($id);
-        $seller->update(['seller_status' => 'rejected']);
+        $seller->update([
+            'seller_status' => 'rejected',
+            'rejection_reason' => $request->rejection_reason
+        ]);
 
         return redirect()->route('admin.dashboard')->with('error', "Akun seller {$seller->name} telah ditolak.");
     }
@@ -109,18 +120,7 @@ class AdminController extends Controller
     // Admin: Update No Resi dari Admin
     public function updateResi(Request $request, $id)
     {
-        $order = Order::findOrFail($id);
-        $request->validate([
-            'no_resi' => 'required|string|max:255',
-        ]);
-
-        $order->update([
-            'no_resi' => $request->no_resi,
-            'barang_dikirim' => true,
-            'tanggal_dikirim' => $order->tanggal_dikirim ?? now(),
-        ]);
-
-        return redirect()->back()->with('success', 'Nomor resi berhasil diperbarui.');
+        abort(403, 'Akses Ditolak: Admin tidak lagi diizinkan untuk mengubah/memperbarui nomor resi pengiriman seller.');
     }
 
     // Admin / System: Konfirmasi Otomatis setelah 24 Jam atau Approve Komplain
@@ -176,8 +176,8 @@ class AdminController extends Controller
             'bukti_transfer_refund' => 'required|image|mimes:jpeg,png,jpg,webp|max:5120',
         ], [
             'bukti_transfer_refund.required' => 'Foto / screenshot bukti transfer wajib diunggah.',
-            'bukti_transfer_refund.image'    => 'File harus berupa gambar.',
-            'bukti_transfer_refund.max'      => 'Ukuran gambar maksimal 5 MB.',
+            'bukti_transfer_refund.image' => 'File harus berupa gambar.',
+            'bukti_transfer_refund.max' => 'Ukuran gambar maksimal 5 MB.',
         ]);
 
         // Simpan bukti transfer refund
@@ -193,10 +193,10 @@ class AdminController extends Controller
         }
 
         $order->update([
-            'status'                 => 'menunggu_konfirmasi_refund',
-            'bukti_transfer_refund'  => $namaFile,
-            'admin_note'             => 'Dana refund sebesar Rp ' . number_format($order->total_harga, 0, ',', '.') . ' telah ditransfer Admin ke rekening Anda (' . $order->bank_refund . ' - ' . $order->norek_refund . ' a.n ' . $order->namarek_refund . '). Silakan konfirmasi apakah dana sudah masuk.',
-            'admin_note_at'          => now(),
+            'status' => 'menunggu_konfirmasi_refund',
+            'bukti_transfer_refund' => $namaFile,
+            'admin_note' => 'Dana refund sebesar Rp ' . number_format($order->total_harga, 0, ',', '.') . ' telah ditransfer Admin ke rekening Anda (' . $order->bank_refund . ' - ' . $order->norek_refund . ' a.n ' . $order->namarek_refund . '). Silakan konfirmasi apakah dana sudah masuk.',
+            'admin_note_at' => now(),
         ]);
 
         return redirect()->back()->with('success', 'Bukti transfer refund berhasil diunggah! Buyer diminta mengkonfirmasi penerimaan dana.');
@@ -236,16 +236,16 @@ class AdminController extends Controller
         $order = Order::findOrFail($id);
 
         $request->validate([
-            'admin_note'    => 'required|string|max:1000',
+            'admin_note' => 'required|string|max:1000',
             'estimasi_tiba' => 'nullable|date|after_or_equal:today',
         ], [
-            'admin_note.required'    => 'Pesan untuk buyer wajib diisi.',
+            'admin_note.required' => 'Pesan untuk buyer wajib diisi.',
             'estimasi_tiba.after_or_equal' => 'Estimasi tiba tidak boleh di masa lalu.',
         ]);
 
         $order->update([
-            'status'        => $order->status === 'dikirim' ? 'keterlambatan' : $order->status,
-            'admin_note'    => $request->admin_note,
+            'status' => $order->status === 'dikirim' ? 'keterlambatan' : $order->status,
+            'admin_note' => $request->admin_note,
             'estimasi_tiba' => $request->estimasi_tiba ?: null,
             'admin_note_at' => now(),
         ]);
