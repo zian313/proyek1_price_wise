@@ -17,12 +17,16 @@ class ProductController extends Controller
         return view('seller.products.index', compact('products'));
     }
 
+    // 2. CREATE: Menampilkan form untuk menambahkan produk baru
     public function create()
     {
+<<<<<<< HEAD
         if (Auth::user()->role === 'seller' && Auth::user()->seller_status !== 'approved') {
             return redirect()->route('dashboard')->with('error', 'Akun seller Anda masih belum disetujui Admin. Anda belum dapat menambahkan produk.');
         }
 
+=======
+>>>>>>> bf148b65a4b4ebe26ba94ae1a78d2ebd6cd06f21
         $categories = \App\Models\Category::all(); // Pastikan ambil data dari model
         return view('seller.products.create', compact('categories'));
     }
@@ -78,8 +82,8 @@ class ProductController extends Controller
     public function edit(string $id)
     {
         $product = Product::where('id', $id)->where('user_id', \Auth::id())->firstOrFail();
-        $categories = \App\Models\Category::all(); 
-        
+        $categories = \App\Models\Category::all();
+
         return view('seller.products.edit', compact('product', 'categories'));
     }
 
@@ -100,7 +104,7 @@ class ProductController extends Controller
             'atas_nama' => 'nullable|string|max:255',
         ]);
 
-        $nama_file_foto = $product->foto; 
+        $nama_file_foto = $product->foto;
 
         if ($request->hasFile('foto')) {
             if ($product->foto && file_exists(public_path('storage/products/' . $product->foto))) {

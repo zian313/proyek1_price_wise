@@ -11,11 +11,7 @@ class User extends Authenticatable
 {
     use HasFactory, Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
+    // Kolom yang diizinkan diisi secara massal (mass assignment)
     protected $fillable = [
         'name',
         'email',
@@ -32,21 +28,13 @@ class User extends Authenticatable
         'seller_status',
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
+    // Kolom yang disembunyikan ketika model dikonversi ke array/JSON
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
+    // Mendefinisikan tipe casting otomatis untuk kolom tertentu
     protected function casts(): array
     {
         return [
