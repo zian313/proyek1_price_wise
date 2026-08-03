@@ -201,7 +201,7 @@
                             </p>
                             @foreach($order->orderDetails as $detail)
                                 @php 
-                                                                                                                                                                    $product = $detail->product;
+                                                                                                                                                                                                                                                                                                                                    $product = $detail->product;
                                     $seller = $product ? $product->user : null;
                                     // Ambil detail bank dari produk, jika kosong ambil dari profile user/seller
                                     $bank_name = ($product && $product->bank_name) ? $product->bank_name : ($seller ? $seller->bank_name : null);
@@ -556,6 +556,7 @@
                                             </p>
                                             <div class="flex flex-col sm:flex-row gap-3">
                                                 <form action="{{ route('admin.order.approveRefund', $order->id) }}"
+                                                    method="POST"
                                                     onsubmit="confirmSubmit(event, 'Setujui komplain buyer? Buyer akan diminta memasukkan No. Resi Retur & Rekening Refund.', 'Setuju Refund', 'success', '#10b981')">
                                                     @csrf
                                                     <button type="submit"
@@ -637,6 +638,7 @@
                                                     @if($order->norek_refund)
                                                         {{-- FORM UPLOAD BUKTI TRANSFER REFUND --}}
                                                         <form action="{{ route('admin.order.finalizeRefund', $order->id) }}"
+                                                            method="POST" enctype="multipart/form-data"
                                                             onsubmit="confirmSubmit(event, 'Konfirmasi bahwa Anda sudah mentransfer Rp {{ number_format($order->total_harga, 0, ',', '.') }} ke rekening Buyer?', 'Ya, Sudah Transfer', 'success', '#10b981')">
                                                             @csrf
                                                             @if($errors->has('bukti_transfer_refund'))
