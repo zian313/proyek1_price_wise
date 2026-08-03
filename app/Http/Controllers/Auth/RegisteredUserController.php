@@ -32,23 +32,23 @@ class RegisteredUserController extends Controller
     {
         $rules = [
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:'.User::class],
+            'password' => ['required', 'confirmed', 'min:8'],
             'role' => ['required', 'in:buyer,seller'],
         ];
 
         if ($request->role === 'seller') {
             $rules['nama_ktp'] = ['required', 'string', 'max:255'];
             $rules['alamat_lengkap'] = ['required', 'string', 'max:1000'];
-            $rules['foto_ktp'] = ['required', 'image', 'mimes:jpeg,png,jpg', 'max:2048'];
-            $rules['selfie_ktp'] = ['required', 'image', 'mimes:jpeg,png,jpg', 'max:2048'];
+            $rules['foto_ktp'] = ['required', 'image', 'mimes:jpeg,png,jpg', 'max:10240'];
+            $rules['selfie_ktp'] = ['required', 'image', 'mimes:jpeg,png,jpg', 'max:10240'];
         }
 
         $request->validate($rules);
 
         $userData = [
             'name' => $request->name,
-            'email' => $request->email,
+            'email' => strtolower($request->email),
             'password' => Hash::make($request->password),
             'role' => $request->role,
             'seller_status' => $request->role === 'seller' ? 'pending' : 'approved',
@@ -75,8 +75,8 @@ class RegisteredUserController extends Controller
 
         event(new Registered($user));
 
-        Auth::login($user);
+        // Auth::login($user); // Disable auto-login after registration
 
-        return redirect(route('dashboard', absolute: false));
+        return redirect(route('login', absolute: false))->with('status', 'Pendaftaran berhasil! Silakan login untuk masuk ke akun Anda.');
     }
 }

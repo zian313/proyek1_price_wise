@@ -35,6 +35,10 @@ class Order extends Model
         'retur_diterima_seller',
         'bukti_transfer_refund',
         'refund_dikonfirmasi_buyer',
+        'bukti_resi',
+        'bukti_resi_retur',
+        'seller_dispute_reason',
+        'seller_dispute_video',
     ];
 
     // Casting otomatis kolom ke tipe data yang sesuai

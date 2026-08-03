@@ -47,8 +47,20 @@
 
                             <div class="flex-1 space-y-2">
                                 <h4 class="text-xl font-black text-white">{{ $product->nama_produk }}</h4>
+                                
+                                <!-- Seller Info in Checkout -->
+                                <div class="flex items-center gap-2 mb-2 mt-2 p-2 bg-[#0B132B]/50 rounded-lg border border-gray-800/50 w-fit">
+                                    <div class="w-7 h-7 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-500 flex items-center justify-center text-xs font-bold text-white shadow-md border border-indigo-400/30">
+                                        {{ strtoupper(substr($product->user->name, 0, 1)) }}
+                                    </div>
+                                    <div class="flex flex-col">
+                                        <span class="text-[9px] text-gray-500 uppercase tracking-widest font-bold leading-none">Penjual</span>
+                                        <span class="text-xs font-bold text-indigo-200">{{ $product->user->name }}</span>
+                                    </div>
+                                </div>
+
                                 <p class="text-sm text-gray-400 leading-relaxed">{{ $product->deskripsi }}</p>
-                                <div class="pt-4 border-t border-gray-800/60 flex justify-between items-center">
+                                <div class="pt-4 mt-2 border-t border-gray-800/60 flex justify-between items-center">
                                     <span class="text-xs text-gray-500">Harga Satuan:</span>
                                     <span class="text-xl font-black text-emerald-400">Rp {{ number_format($product->harga, 0, ',', '.') }}</span>
                                 </div>

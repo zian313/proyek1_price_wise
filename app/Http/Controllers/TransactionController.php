@@ -260,13 +260,22 @@ class TransactionController extends Controller
 
         $request->validate([
             'no_resi' => 'required|string|max:255',
+            'bukti_resi' => 'required|image|mimes:jpeg,png,jpg,webp|max:5120',
         ]);
 
         try {
+            $buktiResiName = null;
+            if ($request->hasFile('bukti_resi')) {
+                $file = $request->file('bukti_resi');
+                $buktiResiName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+                $file->storeAs('public/bukti_resi', $buktiResiName);
+            }
+
             $order->update([
                 'barang_dikirim' => true,
                 'tanggal_dikirim' => now(),
                 'no_resi' => $request->no_resi,
+                'bukti_resi' => $buktiResiName,
             ]);
 
             return redirect()->route('seller.orders')->with('success', 'Barang berhasil ditandai sebagai telah dikirim dengan No. Resi: ' . $request->no_resi);
@@ -340,13 +349,22 @@ class TransactionController extends Controller
             'namarek_refund' => 'required|string|max:100',
             'ekspedisi_retur' => 'required|string|max:50',
             'no_resi_retur' => 'required|string|max:100',
+            'bukti_resi_retur' => 'required|image|mimes:jpeg,png,jpg,webp|max:5120',
         ], [
             'bank_refund.required' => 'Nama Bank / E-Wallet wajib diisi.',
             'norek_refund.required' => 'Nomor Rekening / No HP E-Wallet wajib diisi.',
             'namarek_refund.required' => 'Nama Pemilik Rekening wajib diisi.',
             'ekspedisi_retur.required' => 'Jenis Ekspedisi Retur wajib dipilih / diisi.',
             'no_resi_retur.required' => 'Nomor Resi Retur pengembalian barang wajib diisi.',
+            'bukti_resi_retur.required' => 'Foto bukti resi retur wajib diunggah.',
         ]);
+
+        $buktiResiReturName = null;
+        if ($request->hasFile('bukti_resi_retur')) {
+            $file = $request->file('bukti_resi_retur');
+            $buktiResiReturName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+            $file->storeAs('public/bukti_resi', $buktiResiReturName);
+        }
 
         // Update status ke barang_diretur secara pasti!
         $order->update([
@@ -356,6 +374,7 @@ class TransactionController extends Controller
             'namarek_refund' => $request->namarek_refund,
             'ekspedisi_retur' => $request->ekspedisi_retur,
             'no_resi_retur' => $request->no_resi_retur,
+            'bukti_resi_retur' => $buktiResiReturName,
             'tanggal_retur' => $order->tanggal_retur ?? now(),
         ]);
 
@@ -381,6 +400,44 @@ class TransactionController extends Controller
         ]);
 
         return redirect()->back()->with('success', 'Barang retur berhasil dikonfirmasi telah sampai! Admin akan mentransfer dana refund ke Buyer.');
+    }
+
+    // Seller: Tolak barang retur (Barang tidak sesuai)
+    public function sellerDisputeRetur(Request $request, $id)
+    {
+        $order = Order::findOrFail($id);
+
+        $sellerOwnsProduct = $order->orderDetails()->whereHas('product', function ($q) {
+            $q->where('user_id', auth()->id());
+        })->exists();
+
+        if (!$sellerOwnsProduct && auth()->user()->role !== 'admin') {
+            return redirect()->back()->with('error', 'Anda tidak memiliki akses ke pesanan ini.');
+        }
+
+        $request->validate([
+            'seller_dispute_reason' => 'required|string',
+            'seller_dispute_video' => 'required|mimes:mp4,mov,ogg,qt|max:20000',
+        ], [
+            'seller_dispute_reason.required' => 'Alasan penolakan wajib diisi.',
+            'seller_dispute_video.required' => 'Video bukti unboxing wajib diunggah.',
+            'seller_dispute_video.max' => 'Ukuran video maksimal 20MB.',
+        ]);
+
+        $videoName = null;
+        if ($request->hasFile('seller_dispute_video')) {
+            $file = $request->file('seller_dispute_video');
+            $videoName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+            $file->storeAs('public/dispute_videos', $videoName);
+        }
+
+        $order->update([
+            'status' => 'investigasi_retur',
+            'seller_dispute_reason' => $request->seller_dispute_reason,
+            'seller_dispute_video' => $videoName,
+        ]);
+
+        return redirect()->back()->with('success', 'Investigasi retur telah diajukan ke Admin. Mohon tunggu keputusan Admin.');
     }
 
     // Buyer: Konfirmasi dana refund sudah diterima dari Admin

@@ -77,10 +77,13 @@
                 function toggleSellerFields() {
                     const role = document.getElementById('role').value;
                     const sellerFields = document.getElementById('seller_fields');
+                    const inputs = sellerFields.querySelectorAll('input[type="text"], input[type="file"], textarea');
                     if (role === 'seller') {
                         sellerFields.classList.remove('hidden');
+                        inputs.forEach(input => input.setAttribute('required', 'required'));
                     } else {
                         sellerFields.classList.add('hidden');
+                        inputs.forEach(input => input.removeAttribute('required'));
                     }
                 }
                 document.addEventListener('DOMContentLoaded', toggleSellerFields);

@@ -40,6 +40,16 @@
 
     <div class="min-h-screen flex flex-col justify-center items-center px-4 py-12 relative z-10">
 
+        <!-- Back Button -->
+        <a href="/" class="absolute top-6 left-6 flex items-center gap-2 text-blue-200 hover:text-white transition z-20 group">
+            <div class="w-10 h-10 bg-blue-900/40 backdrop-blur border border-blue-700/50 rounded-full flex items-center justify-center group-hover:bg-blue-600 group-hover:border-blue-500 transition shadow-lg">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                </svg>
+            </div>
+            <span class="font-bold text-sm hidden sm:block">Kembali</span>
+        </a>
+
         <!-- Logo -->
         <div class="mb-6">
             <a href="/" class="flex items-center gap-2 group">

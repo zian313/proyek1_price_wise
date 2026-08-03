@@ -154,10 +154,27 @@
                                                         <p class="text-[11px] text-gray-200 leading-relaxed">{{ $order->admin_note }}</p>
                                                     </div>
                                                 @endif
+                                                
+                                                {{-- Alamat Pengembalian --}}
+                                                @if($product && $product->user)
+                                                <div class="bg-slate-800/80 border border-slate-600 rounded-lg p-2.5 mb-2">
+                                                    <p class="text-[10px] font-black text-gray-300 uppercase mb-1 flex items-center gap-1">
+                                                        <svg class="w-3.5 h-3.5 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                                                        Alamat Pengembalian (Toko)
+                                                    </p>
+                                                    <div class="pl-4.5">
+                                                        <p class="text-[11px] text-gray-200 font-bold">{{ $product->user->name }}</p>
+                                                        <p class="text-[10px] text-gray-400 mt-0.5 leading-relaxed">
+                                                            {{ $product->user->alamat_lengkap ?? 'Silakan chat penjual untuk meminta detail alamat.' }}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                                @endif
+
                                                 {{-- Form isi resi + norek --}}
                                                 <div class="bg-slate-900 border border-amber-500/30 rounded-xl p-3 space-y-2">
                                                     <p class="text-[11px] text-amber-300 font-bold">💳 Isi Rekening Refund & Resi Pengembalian Barang:</p>
-                                                    <form action="{{ route('orders.submitRetur', $order->id) }}" method="POST" class="space-y-2">
+                                                    <form action="{{ route('orders.submitRetur', $order->id) }}" method="POST" enctype="multipart/form-data" class="space-y-2">
                                                         @csrf
                                                         <div class="grid grid-cols-2 gap-2">
                                                             <div>
@@ -174,6 +191,10 @@
                                                                 <input type="text" name="no_resi_retur" value="{{ old('no_resi_retur') }}" placeholder="Nomor Resi" required class="w-full text-xs bg-slate-950 border border-slate-700 rounded-lg p-2 text-white focus:border-teal-500 font-mono" />
                                                             </div>
                                                         </div>
+                                                        <div>
+                                                            <label class="block text-[10px] text-gray-400 mb-0.5">Upload Foto Bukti Resi Retur (Wajib)</label>
+                                                            <input type="file" name="bukti_resi_retur" accept="image/*" required class="w-full text-xs text-slate-400 file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-[10px] file:font-bold file:bg-amber-950 file:text-amber-300 hover:file:bg-amber-900 border border-slate-700 rounded-lg cursor-pointer bg-slate-950" />
+                                                        </div>
                                                         <div class="grid grid-cols-2 gap-2">
                                                             <div>
                                                                 <label class="block text-[10px] text-gray-400 mb-0.5">Bank / E-Wallet</label>
@@ -188,7 +209,7 @@
                                                             <label class="block text-[10px] text-gray-400 mb-0.5">Nama Pemilik Rekening</label>
                                                             <input type="text" name="namarek_refund" value="{{ old('namarek_refund') }}" placeholder="Sesuai buku tabungan" required class="w-full text-xs bg-slate-950 border border-slate-700 rounded-lg p-2 text-white focus:border-teal-500" />
                                                         </div>
-                                                        <button type="submit" class="w-full py-2 bg-amber-600 hover:bg-amber-500 text-white rounded-lg text-xs font-bold transition">
+                                                        <button type="submit" class="w-full py-2 bg-amber-600 hover:bg-amber-500 text-white rounded-lg text-xs font-bold transition mt-2">
                                                             🚚 Simpan Resi & Rekening Refund
                                                         </button>
                                                     </form>
@@ -209,6 +230,10 @@
                                                             <span class="text-gray-500">Kurir:</span> <strong class="text-indigo-400">{{ $order->ekspedisi_retur ?? '-' }}</strong>
                                                             &nbsp;|&nbsp;
                                                             <span class="text-gray-500">Resi:</span> <strong class="font-mono text-white">{{ $order->no_resi_retur }}</strong>
+                                                            @if($order->bukti_resi_retur)
+                                                                &nbsp;|&nbsp;
+                                                                <a href="{{ asset('storage/bukti_resi/' . $order->bukti_resi_retur) }}" target="_blank" class="text-indigo-400 hover:underline font-bold text-[10px]">Lihat Bukti Foto</a>
+                                                            @endif
                                                         </p>
                                                     @endif
                                                     @if($order->norek_refund)
@@ -219,7 +244,32 @@
                                                     @if($order->retur_diterima_seller)
                                                         <p class="text-emerald-400 font-bold text-[11px] pt-1">✅ Seller sudah terima barang retur. Admin akan segera transfer dana.</p>
                                                     @else
-                                                        <p class="text-amber-400 text-[11px] pt-1">⏳ Menunggu Seller konfirmasi terima barang retur.</p>
+                                                        <p class="text-amber-400 text-[11px] pt-1 mb-2">⏳ Menunggu Seller konfirmasi terima barang retur.</p>
+                                                        
+                                                        {{-- Tombol Ubah Resi Retur --}}
+                                                        <div x-data="{ openEditRetur: false }" class="mt-1 border-t border-slate-700 pt-2">
+                                                            <button @click="openEditRetur = !openEditRetur" type="button" class="text-[10px] text-indigo-400 hover:text-indigo-300 underline font-bold block mb-2">Ubah Resi / Ekspedisi?</button>
+                                                            <form x-show="openEditRetur" style="display: none;" action="{{ route('orders.submitRetur', $order->id) }}" method="POST" enctype="multipart/form-data" class="space-y-2 bg-slate-950 p-2 rounded-lg border border-slate-800">
+                                                                @csrf
+                                                                <input type="hidden" name="bank_refund" value="{{ $order->bank_refund }}">
+                                                                <input type="hidden" name="norek_refund" value="{{ $order->norek_refund }}">
+                                                                <input type="hidden" name="namarek_refund" value="{{ $order->namarek_refund }}">
+                                                                
+                                                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                                                    <select name="ekspedisi_retur" required class="w-full text-[10px] bg-slate-900 border border-slate-700 rounded p-1.5 text-white">
+                                                                        @foreach(['JNE','J&T','SiCepat','Anteraja','Pos Indonesia','Lainnya / Kurir Instant'] as $eks)
+                                                                            <option value="{{ $eks }}" {{ $order->ekspedisi_retur === $eks ? 'selected' : '' }}>{{ $eks }}</option>
+                                                                        @endforeach
+                                                                    </select>
+                                                                    <input type="text" name="no_resi_retur" value="{{ $order->no_resi_retur }}" required class="w-full text-[10px] bg-slate-900 border border-slate-700 rounded p-1.5 text-white">
+                                                                </div>
+                                                                <div>
+                                                                    <label class="block text-[10px] text-gray-400 mb-0.5">Ubah Foto Bukti Resi Retur (Wajib)</label>
+                                                                    <input type="file" name="bukti_resi_retur" accept="image/*" required class="w-full text-xs text-slate-400 file:mr-2 file:py-1 file:px-2 file:rounded-lg file:border-0 file:text-[10px] file:font-bold file:bg-indigo-950 file:text-indigo-300 hover:file:bg-indigo-900 border border-slate-700 rounded-lg cursor-pointer bg-slate-900" />
+                                                                </div>
+                                                                <button type="submit" class="w-full py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded text-[10px] font-bold">Simpan Perubahan</button>
+                                                            </form>
+                                                        </div>
                                                     @endif
                                                 </div>
                                             </div>
@@ -344,6 +394,9 @@
                                                     @endif
                                                     @if($order->no_resi)
                                                         <span class="text-xs font-mono font-bold text-teal-400 bg-slate-900 px-2 py-1 rounded border border-slate-700">Resi: {{ $order->no_resi }}</span>
+                                                        @if($order->bukti_resi)
+                                                            <a href="{{ asset('storage/bukti_resi/' . $order->bukti_resi) }}" target="_blank" class="text-xs font-bold text-teal-400 hover:underline inline-block mt-1">📸 Lihat Bukti Resi</a>
+                                                        @endif
                                                     @endif
                                                 </div>
                                                 {{-- Pesan admin (estimasi / keterlambatan) --}}

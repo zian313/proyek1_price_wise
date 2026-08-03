@@ -38,13 +38,35 @@
                             {{ __('Kelola Produk') }}
                         </x-nav-link>
                         <x-nav-link :href="route('seller.orders')" :active="request()->routeIs('seller.orders')"
-                            class="text-slate-400 hover:text-white transition">
+                            class="text-slate-400 hover:text-white transition relative">
                             {{ __('Pesanan Masuk') }}
+                            @php
+                                $newOrdersCount = \App\Models\OrderDetail::whereHas('product', function($q) {
+                                    $q->where('user_id', Auth::id());
+                                })->whereHas('order', function($q) {
+                                    $q->whereIn('status', ['menunggu_pembayaran', 'menunggu_verifikasi', 'lunas'])->where('barang_dikirim', false);
+                                })->count();
+                            @endphp
+                            @if($newOrdersCount > 0)
+                                <span class="absolute top-4 -right-2 flex h-2 w-2">
+                                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
+                                    <span class="relative inline-flex rounded-full h-2 w-2 bg-rose-500"></span>
+                                </span>
+                            @endif
                         </x-nav-link>
                     @elseif(Auth::user()->role === 'buyer')
                         <x-nav-link :href="route('orders.history')" :active="request()->routeIs('orders.history')"
                             class="text-slate-400 hover:text-white transition">
                             {{ __('Riwayat Pembelian') }}
+                        </x-nav-link>
+                    @elseif(Auth::user()->role === 'admin')
+                        <x-nav-link :href="route('admin.sellers')" :active="request()->routeIs('admin.sellers')"
+                            class="text-slate-400 hover:text-white transition">
+                            {{ __('Verifikasi Seller') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('admin.orders')" :active="request()->routeIs('admin.orders')"
+                            class="text-slate-400 hover:text-white transition">
+                            {{ __('Kelola Order') }}
                         </x-nav-link>
                     @endif
                 </div>
@@ -121,13 +143,28 @@
                     {{ __('Kelola Produk') }}
                 </x-responsive-nav-link>
                 <x-responsive-nav-link :href="route('seller.orders')" :active="request()->routeIs('seller.orders')"
-                    class="text-slate-400 hover:text-white hover:bg-slate-800">
+                    class="text-slate-400 hover:text-white hover:bg-slate-800 flex items-center justify-between">
                     {{ __('Pesanan Masuk') }}
+                    @if($newOrdersCount > 0)
+                        <span class="flex h-2.5 w-2.5 relative">
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-rose-500"></span>
+                        </span>
+                    @endif
                 </x-responsive-nav-link>
             @elseif(Auth::user()->role === 'buyer')
                 <x-responsive-nav-link :href="route('orders.history')" :active="request()->routeIs('orders.history')"
                     class="text-slate-400 hover:text-white hover:bg-slate-800">
                     {{ __('Riwayat Pembelian') }}
+                </x-responsive-nav-link>
+            @elseif(Auth::user()->role === 'admin')
+                <x-responsive-nav-link :href="route('admin.sellers')" :active="request()->routeIs('admin.sellers')"
+                    class="text-slate-400 hover:text-white hover:bg-slate-800">
+                    {{ __('Verifikasi Seller') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('admin.orders')" :active="request()->routeIs('admin.orders')"
+                    class="text-slate-400 hover:text-white hover:bg-slate-800">
+                    {{ __('Kelola Order') }}
                 </x-responsive-nav-link>
             @endif
         </div>

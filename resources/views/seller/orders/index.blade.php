@@ -220,13 +220,40 @@
                                                                 {{ $order->no_resi_retur }}
                                                             </span>
                                                         </div>
-                                                        @if(!$order->retur_diterima_seller)
-                                                            <form action="{{ route('seller.orders.confirmRetur', $order->id) }}" method="POST" onsubmit="confirmSubmit(event, 'Konfirmasi bahwa barang retur dari buyer sudah sampai di toko/rumah Anda? Setelah ini Admin akan mentransfer dana refund.', 'Ya, Sudah Sampai', 'info', '#059669')">
-                                                                @csrf
-                                                                <button type="submit" class="w-full py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-bold transition">
-                                                                    ✅ Konfirmasi Barang Retur Diterima
-                                                                </button>
-                                                            </form>
+                                                        @if($order->bukti_resi_retur)
+                                                            <a href="{{ asset('storage/bukti_resi/' . $order->bukti_resi_retur) }}" target="_blank" class="text-[10px] text-teal-400 hover:underline font-bold block">📸 Lihat Bukti Resi Retur</a>
+                                                        @endif
+                                                        @if(!$order->retur_diterima_seller && $order->status !== 'investigasi_retur')
+                                                            <div class="flex flex-col gap-2 mt-2">
+                                                                <form action="{{ route('seller.orders.confirmRetur', $order->id) }}" method="POST" onsubmit="confirmSubmit(event, 'Konfirmasi bahwa barang retur dari buyer sudah sampai di toko/rumah Anda? Setelah ini Admin akan mentransfer dana refund.', 'Ya, Sudah Sampai', 'info', '#059669')">
+                                                                    @csrf
+                                                                    <button type="submit" class="w-full py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-bold transition">
+                                                                        ✅ Konfirmasi Barang Retur Diterima
+                                                                    </button>
+                                                                </form>
+
+                                                                <div x-data="{ openDispute: false }" class="w-full">
+                                                                    <button @click="openDispute = !openDispute" class="w-full py-1.5 bg-red-600/80 hover:bg-red-500 text-white rounded-lg text-xs font-bold transition">
+                                                                        ❌ Tolak Retur (Barang Tidak Sesuai)
+                                                                    </button>
+                                                                    <form x-show="openDispute" style="display: none;" action="{{ route('seller.orders.disputeRetur', $order->id) }}" method="POST" enctype="multipart/form-data" class="mt-2 p-2 bg-slate-900 border border-red-500/50 rounded-lg space-y-2">
+                                                                        @csrf
+                                                                        <label class="text-[10px] text-gray-300 font-bold">Alasan Penolakan:</label>
+                                                                        <textarea name="seller_dispute_reason" required class="w-full text-xs bg-slate-950 border border-slate-700 rounded-lg p-2 text-white focus:border-red-500" placeholder="Jelaskan ketidaksesuaian barang..."></textarea>
+                                                                        
+                                                                        <label class="text-[10px] text-gray-300 font-bold">Upload Video Bukti Unboxing (Wajib):</label>
+                                                                        <input type="file" name="seller_dispute_video" accept="video/*" required class="w-full text-[10px] text-slate-400 file:mr-2 file:py-1 file:px-2 file:rounded-lg file:border-0 file:text-[10px] file:font-bold file:bg-red-950 file:text-red-300 hover:file:bg-red-900 border border-slate-700 rounded-lg cursor-pointer bg-slate-950" />
+                                                                        
+                                                                        <button type="submit" class="w-full py-1.5 bg-red-600 hover:bg-red-500 text-white rounded-lg text-[10px] font-bold mt-1">Ajukan Investigasi ke Admin</button>
+                                                                    </form>
+                                                                </div>
+                                                            </div>
+                                                        @elseif($order->status === 'investigasi_retur')
+                                                            <div class="mt-2 p-2 bg-red-950/50 border border-red-500/50 rounded-lg text-center">
+                                                                <span class="text-[11px] font-bold text-red-400">
+                                                                    🚨 Sedang Diinvestigasi Admin (Dispute)
+                                                                </span>
+                                                            </div>
                                                         @else
                                                             <span class="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-400">
                                                                 ✓ Barang retur telah Anda terima
@@ -246,10 +273,12 @@
                                                     class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-300">
                                                     Lunas
                                                 </span>
-                                                <form action="{{ route('seller.orders.sendPackage', $order->id) }}" method="POST" class="flex flex-col items-center gap-2" onsubmit="confirmSubmit(event, 'Tandai barang ini sebagai telah dikirim?', 'Ya, Dikirim', 'info', '#2563eb')">
+                                                <form action="{{ route('seller.orders.sendPackage', $order->id) }}" method="POST" enctype="multipart/form-data" class="flex flex-col items-center gap-2" onsubmit="confirmSubmit(event, 'Tandai barang ini sebagai telah dikirim?', 'Ya, Dikirim', 'info', '#2563eb')">
                                                     @csrf
-                                                    <input type="text" name="no_resi" placeholder="Masukkan No. Resi" required class="text-xs bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1 text-white focus:border-teal-500 focus:ring-teal-500 w-40 text-center" />
-                                                    <button type="submit" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold transition">
+                                                    <input type="text" name="no_resi" placeholder="Masukkan No. Resi" required class="text-xs bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1 text-white focus:border-teal-500 focus:ring-teal-500 w-48 text-center mb-1" />
+                                                    <label class="text-[10px] text-gray-400 self-start ml-1">Upload Bukti Resi (Wajib):</label>
+                                                    <input type="file" name="bukti_resi" accept="image/*" required class="w-48 text-[10px] text-slate-400 file:mr-2 file:py-1 file:px-2 file:rounded-lg file:border-0 file:text-[10px] file:font-bold file:bg-blue-950 file:text-blue-300 hover:file:bg-blue-900 border border-slate-700 rounded-lg cursor-pointer bg-slate-900" />
+                                                    <button type="submit" class="w-full px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold transition mt-1">
                                                         🚚 Kirim Barang
                                                     </button>
                                                 </form>
@@ -274,12 +303,29 @@
                                                     <span class="text-xs font-mono font-bold text-teal-400 bg-slate-900 px-2 py-0.5 rounded border border-slate-700">
                                                         Resi: {{ $order->no_resi }}
                                                     </span>
+                                                    @if($order->bukti_resi)
+                                                        <a href="{{ asset('storage/bukti_resi/' . $order->bukti_resi) }}" target="_blank" class="text-[10px] text-teal-400 hover:underline font-bold mt-1">📸 Lihat Bukti Resi</a>
+                                                    @endif
                                                 @endif
                                                 <span class="text-xs text-gray-400">
                                                     @if($order->tanggal_dikirim)
                                                         {{ \Carbon\Carbon::parse($order->tanggal_dikirim)->format('d M Y') }}
                                                     @endif
                                                 </span>
+                                                
+                                                {{-- Tombol Ubah Resi (Jika status masih Lunas & Barang Dikirim) --}}
+                                                @if($order->status === 'lunas')
+                                                    <div x-data="{ openEdit: false }" class="mt-2 w-full flex flex-col items-center">
+                                                        <button @click="openEdit = !openEdit" class="text-[10px] text-blue-400 hover:text-blue-300 underline font-bold">Ubah Resi?</button>
+                                                        <form x-show="openEdit" style="display: none;" action="{{ route('seller.orders.sendPackage', $order->id) }}" method="POST" enctype="multipart/form-data" class="flex flex-col items-center gap-1 mt-2 w-full p-2 bg-slate-900 border border-slate-700 rounded-lg">
+                                                            @csrf
+                                                            <input type="text" name="no_resi" value="{{ $order->no_resi }}" required class="text-xs bg-slate-950 border border-slate-700 rounded p-1 text-white text-center w-full focus:border-teal-500 mb-1">
+                                                            <label class="text-[10px] text-gray-400 self-start">Ubah Bukti Resi (Wajib):</label>
+                                                            <input type="file" name="bukti_resi" accept="image/*" required class="w-full text-[10px] text-slate-400 file:mr-2 file:py-1 file:px-2 file:rounded-lg file:border-0 file:text-[10px] file:font-bold file:bg-blue-950 file:text-blue-300 hover:file:bg-blue-900 border border-slate-700 rounded-lg cursor-pointer bg-slate-950 mb-1" />
+                                                            <button type="submit" class="w-full py-1 bg-blue-600 hover:bg-blue-500 text-white rounded text-[10px] font-bold">Simpan</button>
+                                                        </form>
+                                                    </div>
+                                                @endif
                                             </div>
                                         @else
                                             <span
@@ -309,4 +355,29 @@
 
         </div>
     </div>
+    
+    <script>
+        function countdown(targetDateIso) {
+            return {
+                timeLeft: '',
+                start() {
+                    const target = new Date(targetDateIso).getTime();
+                    const update = () => {
+                        const now = new Date().getTime();
+                        const diff = target - now;
+                        if (diff <= 0) {
+                            this.timeLeft = '00j 00m 00s';
+                            return;
+                        }
+                        const hours = Math.floor(diff / (1000 * 60 * 60));
+                        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+                        this.timeLeft = `${String(hours).padStart(2, '0')}j ${String(minutes).padStart(2, '0')}m ${String(seconds).padStart(2, '0')}s`;
+                    };
+                    update();
+                    setInterval(update, 1000);
+                }
+            }
+        }
+    </script>
 </x-app-layout>

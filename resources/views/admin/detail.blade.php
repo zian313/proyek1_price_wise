@@ -324,6 +324,9 @@
                                         Seller)</span>
                                     <span
                                         class="text-base font-bold font-mono text-teal-400">{{ $order->no_resi ?? 'Belum ada resi pengiriman' }}</span>
+                                    @if($order->bukti_resi)
+                                        <a href="{{ asset('storage/bukti_resi/' . $order->bukti_resi) }}" target="_blank" class="text-xs font-bold text-teal-400 hover:underline block mt-1">📸 Lihat Bukti Foto Resi Pengiriman</a>
+                                    @endif
                                 </div>
                             </div>
 
@@ -364,7 +367,7 @@
 
                                     <div class="flex flex-wrap items-center gap-2">
                                         @if($order->status === 'dikirim' || $order->status === 'keterlambatan')
-                                            <form action="{{ route('admin.order.markInvestigation', $order->id) }}"
+                                            <form action="{{ route('admin.order.markInvestigation', $order->id) }}" method="POST"
                                                 method="POST"
                                                 onsubmit="confirmSubmit(event, 'Tandai order ini sebagai BARANG HILANG / INVESTIGASI?', 'Investigasi', 'warning')">
                                                 @csrf
@@ -409,7 +412,7 @@
                                             ditemukan atau dipastikan hilang?
                                         </p>
                                         <div class="flex flex-col sm:flex-row gap-3 pt-2">
-                                            <form action="{{ route('admin.order.resolveInvestigation', $order->id) }}"
+                                            <form action="{{ route('admin.order.resolveInvestigation', $order->id) }}" method="POST"
                                                 method="POST" class="flex-1"
                                                 onsubmit="confirmSubmit(event, 'Barang ditemukan? Ekspedisi akan mengirim ulang ke Buyer.', 'Kirim ke Buyer', 'success', '#10b981')">
                                                 @csrf
@@ -419,7 +422,7 @@
                                                     ✅ Ya, Barang Ditemukan (Kirim Kembali oleh Ekspedisi)
                                                 </button>
                                             </form>
-                                            <form action="{{ route('admin.order.resolveInvestigation', $order->id) }}"
+                                            <form action="{{ route('admin.order.resolveInvestigation', $order->id) }}" method="POST"
                                                 method="POST" class="flex-1"
                                                 onsubmit="confirmSubmit(event, 'Barang pasti hilang? Dana akan dikembalikan (Refund) ke Buyer dan pesanan dibatalkan.', 'Refund Buyer', 'error', '#be123c')">
                                                 @csrf
@@ -500,6 +503,9 @@
                                                                 {{ $order->no_resi_retur }}
                                                             </span>
                                                         </div>
+                                                        @if($order->bukti_resi_retur)
+                                                            <a href="{{ asset('storage/bukti_resi/' . $order->bukti_resi_retur) }}" target="_blank" class="text-[10px] text-teal-400 hover:underline font-bold block mt-1">📸 Lihat Bukti Foto Resi Retur</a>
+                                                        @endif
                                                         <span class="text-[10px] text-gray-400 block mt-1">Tanggal Retur:
                                                             {{ $order->tanggal_retur ? $order->tanggal_retur->diffForHumans() : '-' }}</span>
                                                     @else
@@ -555,7 +561,7 @@
                                                 mengembalikan barang ke seller & menginput nomor rekening refund.
                                             </p>
                                             <div class="flex flex-col sm:flex-row gap-3">
-                                                <form action="{{ route('admin.order.approveRefund', $order->id) }}"
+                                                <form action="{{ route('admin.order.approveRefund', $order->id) }}" method="POST"
                                                     onsubmit="confirmSubmit(event, 'Setujui komplain buyer? Buyer akan diminta memasukkan No. Resi Retur & Rekening Refund.', 'Setuju Refund', 'success', '#10b981')">
                                                     @csrf
                                                     <button type="submit"
@@ -573,7 +579,7 @@
                                                 </form>
                                             </div>
                                         </div>
-                                    @elseif(in_array($order->status, ['refund_disetujui', 'barang_diretur']))
+                                    @elseif(in_array($order->status, ['refund_disetujui', 'barang_diretur', 'investigasi_retur']))
                                         {{-- TAHAP RETUR & TRANSFER REFUND OLEH ADMIN --}}
                                         <div class="pt-4 border-t border-indigo-500/30 space-y-4">
                                             <div class="bg-indigo-950/80 border border-indigo-500/40 rounded-2xl p-5 space-y-3">
@@ -596,6 +602,9 @@
                                                                 <span
                                                                     class="font-mono font-bold text-teal-300 text-sm">{{ $order->no_resi_retur }}</span>
                                                             </span>
+                                                            @if($order->bukti_resi_retur)
+                                                                <a href="{{ asset('storage/bukti_resi/' . $order->bukti_resi_retur) }}" target="_blank" class="text-[10px] text-teal-400 hover:underline font-bold block mt-1">📸 Lihat Bukti Foto Resi Retur</a>
+                                                            @endif
                                                             <span class="text-[10px] text-gray-400 block mt-1">Dikirim
                                                                 {{ $order->tanggal_retur ? $order->tanggal_retur->diffForHumans() : '' }}</span>
                                                         @else
@@ -621,7 +630,30 @@
                                                 </div>
 
                                                 <div class="pt-2">
-                                                    @if($order->retur_diterima_seller)
+                                                    @if($order->status === 'investigasi_retur')
+                                                        <div class="bg-red-950/40 border border-red-500/50 p-4 rounded-xl mb-4">
+                                                            <p class="text-sm text-red-400 font-black mb-2 flex items-center gap-2">
+                                                                🚨 SELLER MENOLAK BARANG RETUR (DISPUTE)
+                                                            </p>
+                                                            <p class="text-xs text-gray-300 mb-2">
+                                                                <span class="font-bold text-gray-400">Alasan Penolakan:</span><br>
+                                                                {{ $order->seller_dispute_reason }}
+                                                            </p>
+                                                            @if($order->seller_dispute_video)
+                                                                <a href="{{ asset('storage/dispute_videos/' . $order->seller_dispute_video) }}" target="_blank" class="inline-block mt-2 px-3 py-1.5 bg-red-600/80 hover:bg-red-500 text-white rounded text-xs font-bold transition">
+                                                                    🎥 Tonton Video Unboxing Seller
+                                                                </a>
+                                                            @endif
+                                                            <div class="mt-4 pt-3 border-t border-red-500/30 flex gap-2">
+                                                                <form action="{{ route('admin.order.rejectRefund', $order->id) }}" method="POST" onsubmit="confirmSubmit(event, 'Tolak refund pembeli dan berikan dana kepada seller karena pembeli terbukti curang?', 'Ya, Tolak Refund', 'error', '#e11d48')" class="flex-1">
+                                                                    @csrf
+                                                                    <button type="submit" class="w-full py-2 bg-rose-700 hover:bg-rose-600 text-white rounded-lg text-[10px] font-black uppercase tracking-wider transition">
+                                                                        ❌ Pembeli Curang (Beri Dana ke Seller)
+                                                                    </button>
+                                                                </form>
+                                                            </div>
+                                                        </div>
+                                                    @elseif($order->retur_diterima_seller)
                                                         <p class="text-xs text-emerald-400 font-bold mb-3 flex items-center gap-1">
                                                             ✓ Seller telah mengonfirmasi bahwa barang retur sudah sampai di
                                                             toko/rumahnya! Silakan transfer dana refund ke rekening buyer.
@@ -636,7 +668,7 @@
 
                                                     @if($order->norek_refund)
                                                         {{-- FORM UPLOAD BUKTI TRANSFER REFUND --}}
-                                                        <form action="{{ route('admin.order.finalizeRefund', $order->id) }}"
+                                                        <form action="{{ route('admin.order.finalizeRefund', $order->id) }}" method="POST" enctype="multipart/form-data"
                                                             onsubmit="confirmSubmit(event, 'Konfirmasi bahwa Anda sudah mentransfer Rp {{ number_format($order->total_harga, 0, ',', '.') }} ke rekening Buyer?', 'Ya, Sudah Transfer', 'success', '#10b981')">
                                                             @csrf
                                                             @if($errors->has('bukti_transfer_refund'))

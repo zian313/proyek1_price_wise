@@ -207,8 +207,8 @@ class AdminController extends Controller
     {
         $order = Order::with('orderDetails.product.user')->findOrFail($id);
 
-        if ($order->status !== 'komplain') {
-            return redirect()->back()->with('error', 'Aksi ini hanya berlaku untuk order dengan status komplain.');
+        if (!in_array($order->status, ['komplain', 'investigasi_retur'])) {
+            return redirect()->back()->with('error', 'Aksi ini hanya berlaku untuk order dengan status komplain atau investigasi retur.');
         }
 
         try {

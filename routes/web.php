@@ -86,6 +86,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/orders/{id}/submit-retur', [TransactionController::class, 'submitReturInfo'])->name('orders.submitRetur');
     // Seller: Konfirmasi barang retur sudah diterima
     Route::post('/seller/orders/{id}/confirm-retur', [TransactionController::class, 'sellerConfirmRetur'])->name('seller.orders.confirmRetur');
+    Route::post('/seller/orders/{id}/dispute-retur', [TransactionController::class, 'sellerDisputeRetur'])->name('seller.orders.disputeRetur');
     // Buyer: Konfirmasi dana refund sudah diterima / belum
     Route::post('/orders/{id}/konfirmasi-refund', [TransactionController::class, 'buyerKonfirmasiRefund'])->name('orders.konfirmasiRefund');
 });
@@ -93,6 +94,8 @@ Route::middleware('auth')->group(function () {
 // ADMIN ROUTES
 Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/admin/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
+    Route::get('/admin/sellers', [AdminDashboardController::class, 'sellers'])->name('admin.sellers');
+    Route::get('/admin/orders', [AdminDashboardController::class, 'orders'])->name('admin.orders');
     Route::get('/admin/order/{id}', [AdminController::class, 'show'])->name('admin.order.detail');
     Route::post('/admin/order/{id}/verify', [AdminController::class, 'verify'])->name('admin.order.verify');
     Route::post('/admin/order/{id}/send-package', [AdminController::class, 'sendPackage'])->name('admin.order.sendPackage');

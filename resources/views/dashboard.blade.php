@@ -65,7 +65,7 @@
                 @endif
 
                 <!-- STATS GRID FOR SELLER -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                     <!-- Total Produk -->
                     <div
                         class="bg-[#1C2541] p-6 rounded-2xl border border-slate-800 shadow-xl flex items-center justify-between">
@@ -87,17 +87,6 @@
                                 {{ number_format($totalEarnings, 0, ',', '.') }}</span>
                         </div>
                         <div class="text-4xl">💰</div>
-                    </div>
-
-                    <!-- Pesanan Menunggu Verifikasi -->
-                    <div
-                        class="bg-[#1C2541] p-6 rounded-2xl border border-slate-800 shadow-xl flex items-center justify-between">
-                        <div>
-                            <span class="text-xs text-gray-400 uppercase tracking-wider block font-bold">Pesanan Baru
-                                (Pending)</span>
-                            <span class="text-3xl font-black text-amber-400 mt-2 block">{{ $recentOrdersCount }}</span>
-                        </div>
-                        <div class="text-4xl">🔔</div>
                     </div>
                 </div>
             @endif
@@ -165,9 +154,17 @@
                                 @endif
                             </div>
 
-                            <!-- Detail Produk -->
-                            <h4 class="font-bold text-lg text-white">{{ $product->nama_produk }}</h4>
-                            <div class="flex flex-wrap items-center gap-1.5 mt-1 mb-2">
+                            <h4 class="font-bold text-lg text-white mb-2">{{ $product->nama_produk }}</h4>
+                            
+                            <!-- Seller Info Card -->
+                            <div class="flex items-center gap-2 mb-3">
+                                <div class="w-6 h-6 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-500 flex items-center justify-center text-[10px] font-bold text-white shadow-md shrink-0 border border-indigo-400/30">
+                                    {{ strtoupper(substr($product->user->name, 0, 1)) }}
+                                </div>
+                                <span class="text-xs font-semibold text-indigo-200 truncate">{{ $product->user->name }}</span>
+                            </div>
+
+                            <div class="flex flex-wrap items-center gap-1.5 mb-2">
                                 <span class="inline-block bg-teal-900/50 text-teal-300 text-[11px] px-2.5 py-0.5 rounded-full font-semibold">
                                     {{ $product->category->name }}
                                 </span>
@@ -260,12 +257,27 @@
                             
                             <!-- Product Info & Checkout Action -->
                             <div class="w-full md:w-1/2 p-6 md:p-8 lg:p-10 flex flex-col">
-                                <h2 class="text-3xl font-black text-white mb-3">{{ $product->nama_produk }}</h2>
-                                <span class="inline-flex items-center gap-1.5 self-start bg-teal-900/40 text-teal-300 text-xs px-3 py-1.5 rounded-full mb-6 font-bold border border-teal-500/20">
+                                <h2 class="text-3xl font-black text-white mb-2">{{ $product->nama_produk }}</h2>
+                                
+                                <!-- Seller Info Modal -->
+                                <div class="flex items-center gap-3 mb-5 p-3 bg-white/5 border border-white/10 rounded-2xl w-fit pr-6 backdrop-blur-sm shadow-sm hover:bg-white/10 transition-colors">
+                                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-lg font-bold text-white shadow-inner border border-indigo-400/50">
+                                        {{ strtoupper(substr($product->user->name, 0, 1)) }}
+                                    </div>
+                                    <div class="flex flex-col justify-center">
+                                        <p class="text-[9px] text-gray-400 uppercase tracking-widest font-bold mb-0.5">Dijual Oleh</p>
+                                        <p class="text-sm text-indigo-100 font-bold leading-none flex items-center gap-1">
+                                            {{ $product->user->name }}
+                                            <svg class="w-3.5 h-3.5 text-blue-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <span class="inline-flex items-center gap-1.5 self-start bg-teal-900/40 text-teal-300 text-xs px-3 py-1.5 rounded-full mb-6 font-bold border border-teal-500/20 shadow-sm">
                                     <svg class="w-3.5 h-3.5" width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path></svg>
                                     {{ $product->category->name }}
                                 </span>
-                                <h3 class="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-emerald-400 mb-8">Rp {{ number_format($product->harga, 0, ',', '.') }}</h3>
+                                <h3 class="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-emerald-400 mb-6 drop-shadow-sm">Rp {{ number_format($product->harga, 0, ',', '.') }}</h3>
                                 
                                 <div class="flex-1 mb-8">
                                     <h4 class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4 flex items-center gap-2">
