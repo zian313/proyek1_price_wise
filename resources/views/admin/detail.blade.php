@@ -201,7 +201,7 @@
                             </p>
                             @foreach($order->orderDetails as $detail)
                                 @php 
-                                                                                                                                                                    $product = $detail->product;
+                                                                                                                                                                                                                                                                                                                                    $product = $detail->product;
                                     $seller = $product ? $product->user : null;
                                     // Ambil detail bank dari produk, jika kosong ambil dari profile user/seller
                                     $bank_name = ($product && $product->bank_name) ? $product->bank_name : ($seller ? $seller->bank_name : null);
