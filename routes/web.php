@@ -109,12 +109,15 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::post('/admin/withdrawals/{id}/approve', [WithdrawalController::class, 'approve'])->name('admin.withdrawals.approve');
     Route::post('/admin/withdrawals/{id}/reject', [WithdrawalController::class, 'reject'])->name('admin.withdrawals.reject');
 
+    // Manajemen Refund dan Komplain (Admin)
     Route::get('/admin/order/{id}/approve-refund', function ($id) {
         return redirect()->route('admin.order.detail', $id)->with('error', 'Halaman kadaluarsa karena cache browser. Silakan coba klik tombol "Setujui Refund" sekali lagi.');
     });
     Route::post('/admin/order/{id}/approve-refund', [AdminController::class, 'approveRefund'])->name('admin.order.approveRefund');
     Route::post('/admin/order/{id}/finalize-refund', [AdminController::class, 'finalizeRefundTransfer'])->name('admin.order.finalizeRefund');
     Route::post('/admin/order/{id}/reject-refund', [AdminController::class, 'rejectRefund'])->name('admin.order.rejectRefund');
+
+    // Fitur Notifikasi dan Investigasi Kehilangan (Admin)
     Route::post('/admin/order/{id}/send-note', [AdminController::class, 'sendAdminNote'])->name('admin.order.sendNote');
     Route::post('/admin/order/{id}/mark-investigation', [AdminController::class, 'markAsInvestigation'])->name('admin.order.markInvestigation');
     Route::post('/admin/order/{id}/resolve-investigation', [AdminController::class, 'resolveInvestigation'])->name('admin.order.resolveInvestigation');

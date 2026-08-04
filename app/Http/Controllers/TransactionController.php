@@ -204,6 +204,7 @@ class TransactionController extends Controller
 
         return view('buyer.receipt', compact('order'));
     }
+    // 7. Mengunduh struk dalam format PDF
     public function downloadReceipt($order_id)
     {
         $order = Order::with([
